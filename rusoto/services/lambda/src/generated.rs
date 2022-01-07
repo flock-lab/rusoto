@@ -33,7 +33,7 @@ pub struct AccountLimit {
     #[serde(rename = "CodeSizeUnzipped")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub code_size_unzipped: Option<i64>,
-    /// <p>The maximum size of a deployment package when it's uploaded directly to AWS Lambda. Use Amazon S3 for larger files.</p>
+    /// <p>The maximum size of a deployment package when it's uploaded directly to Lambda. Use Amazon S3 for larger files.</p>
     #[serde(rename = "CodeSizeZipped")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub code_size_zipped: Option<i64>,
@@ -78,7 +78,7 @@ pub struct AddLayerVersionPermissionRequest {
     #[serde(rename = "OrganizationId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub organization_id: Option<String>,
-    /// <p>An account ID, or <code>*</code> to grant permission to all AWS accounts.</p>
+    /// <p>An account ID, or <code>*</code> to grant layer usage permission to all accounts in an organization, or all Amazon Web Services accounts (if <code>organizationId</code> is not specified). For the last case, make sure that you really do want all Amazon Web Services accounts to have usage permission to this layer. </p>
     #[serde(rename = "Principal")]
     pub principal: String,
     /// <p>Only update the policy if the revision ID matches the ID specified. Use this option to avoid modifying a policy that has changed since you last read it.</p>
@@ -119,7 +119,7 @@ pub struct AddPermissionRequest {
     /// <p>The name of the Lambda function, version, or alias.</p> <p class="title"> <b>Name formats</b> </p> <ul> <li> <p> <b>Function name</b> - <code>my-function</code> (name-only), <code>my-function:v1</code> (with alias).</p> </li> <li> <p> <b>Function ARN</b> - <code>arn:aws:lambda:us-west-2:123456789012:function:my-function</code>.</p> </li> <li> <p> <b>Partial ARN</b> - <code>123456789012:function:my-function</code>.</p> </li> </ul> <p>You can append a version number or alias to any of the formats. The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.</p>
     #[serde(rename = "FunctionName")]
     pub function_name: String,
-    /// <p>The AWS service or account that invokes the function. If you specify a service, use <code>SourceArn</code> or <code>SourceAccount</code> to limit who can invoke the function through that service.</p>
+    /// <p>The Amazon Web Services service or account that invokes the function. If you specify a service, use <code>SourceArn</code> or <code>SourceAccount</code> to limit who can invoke the function through that service.</p>
     #[serde(rename = "Principal")]
     pub principal: String,
     /// <p>Specify a version or alias to add permissions to a published version of the function.</p>
@@ -134,7 +134,7 @@ pub struct AddPermissionRequest {
     #[serde(rename = "SourceAccount")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source_account: Option<String>,
-    /// <p>For AWS services, the ARN of the AWS resource that invokes the function. For example, an Amazon S3 bucket or Amazon SNS topic.</p>
+    /// <p>For Amazon Web Services services, the ARN of the Amazon Web Services resource that invokes the function. For example, an Amazon S3 bucket or Amazon SNS topic.</p> <p>Note that Lambda configures the comparison using the <code>StringLike</code> operator.</p>
     #[serde(rename = "SourceArn")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source_arn: Option<String>,
@@ -199,7 +199,7 @@ pub struct AllowedPublishers {
     pub signing_profile_version_arns: Vec<String>,
 }
 
-/// <p>Details about a Code signing configuration. </p>
+/// <p>Details about a <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-codesigning.html">Code signing configuration</a>. </p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct CodeSigningConfig {
@@ -224,7 +224,7 @@ pub struct CodeSigningConfig {
     pub last_modified: String,
 }
 
-/// <p>Code signing configuration policies specifies the validation failure action for signature mismatch or expiry.</p>
+/// <p>Code signing configuration <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-codesigning.html#config-codesigning-policies">policies</a> specify the validation failure action for signature mismatch or expiry.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct CodeSigningPolicies {
     /// <p>Code signing configuration policy for deployment validation failure. If you set the policy to <code>Enforce</code>, Lambda blocks the deployment request if signature validation checks fail. If you set the policy to <code>Warn</code>, Lambda allows the deployment and creates a CloudWatch log. </p> <p>Default value: <code>Warn</code> </p>
@@ -236,7 +236,7 @@ pub struct CodeSigningPolicies {
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct Concurrency {
-    /// <p>The number of concurrent executions that are reserved for this function. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html">Managing Concurrency</a>.</p>
+    /// <p>The number of concurrent executions that are reserved for this function. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html">Managing Concurrency</a>.</p>
     #[serde(rename = "ReservedConcurrentExecutions")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reserved_concurrent_executions: Option<i64>,
@@ -291,19 +291,19 @@ pub struct CreateCodeSigningConfigResponse {
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct CreateEventSourceMappingRequest {
-    /// <p><p>The maximum number of items to retrieve in a single batch.</p> <ul> <li> <p> <b>Amazon Kinesis</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Amazon DynamoDB Streams</b> - Default 100. Max 1,000.</p> </li> <li> <p> <b>Amazon Simple Queue Service</b> - Default 10. For standard queues the max is 10,000. For FIFO queues the max is 10.</p> </li> <li> <p> <b>Amazon Managed Streaming for Apache Kafka</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Self-Managed Apache Kafka</b> - Default 100. Max 10,000.</p> </li> </ul></p>
+    /// <p><p>The maximum number of records in each batch that Lambda pulls from your stream or queue and sends to your function. Lambda passes all of the records in the batch to the function in a single call, up to the payload limit for synchronous invocation (6 MB).</p> <ul> <li> <p> <b>Amazon Kinesis</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Amazon DynamoDB Streams</b> - Default 100. Max 1,000.</p> </li> <li> <p> <b>Amazon Simple Queue Service</b> - Default 10. For standard queues the max is 10,000. For FIFO queues the max is 10.</p> </li> <li> <p> <b>Amazon Managed Streaming for Apache Kafka</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Self-Managed Apache Kafka</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Amazon MQ (ActiveMQ and RabbitMQ)</b> - Default 100. Max 10,000.</p> </li> </ul></p>
     #[serde(rename = "BatchSize")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub batch_size: Option<i64>,
-    /// <p>(Streams) If the function returns an error, split the batch in two and retry.</p>
+    /// <p>(Streams only) If the function returns an error, split the batch in two and retry.</p>
     #[serde(rename = "BisectBatchOnFunctionError")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bisect_batch_on_function_error: Option<bool>,
-    /// <p>(Streams) An Amazon SQS queue or Amazon SNS topic destination for discarded records.</p>
+    /// <p>(Streams only) An Amazon SQS queue or Amazon SNS topic destination for discarded records.</p>
     #[serde(rename = "DestinationConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub destination_config: Option<DestinationConfig>,
-    /// <p>If true, the event source mapping is active. Set to false to pause polling and invocation.</p>
+    /// <p>When true, the event source mapping is active. When false, Lambda pauses polling and invocation.</p> <p>Default: True</p>
     #[serde(rename = "Enabled")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
@@ -311,26 +311,30 @@ pub struct CreateEventSourceMappingRequest {
     #[serde(rename = "EventSourceArn")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub event_source_arn: Option<String>,
+    /// <p>(Streams and Amazon SQS) An object that defines the filter criteria that determine whether Lambda should process an event. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventfiltering.html">Lambda event filtering</a>.</p>
+    #[serde(rename = "FilterCriteria")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filter_criteria: Option<FilterCriteria>,
     /// <p>The name of the Lambda function.</p> <p class="title"> <b>Name formats</b> </p> <ul> <li> <p> <b>Function name</b> - <code>MyFunction</code>.</p> </li> <li> <p> <b>Function ARN</b> - <code>arn:aws:lambda:us-west-2:123456789012:function:MyFunction</code>.</p> </li> <li> <p> <b>Version or Alias ARN</b> - <code>arn:aws:lambda:us-west-2:123456789012:function:MyFunction:PROD</code>.</p> </li> <li> <p> <b>Partial ARN</b> - <code>123456789012:function:MyFunction</code>.</p> </li> </ul> <p>The length constraint applies only to the full ARN. If you specify only the function name, it's limited to 64 characters in length.</p>
     #[serde(rename = "FunctionName")]
     pub function_name: String,
-    /// <p>(Streams) A list of current response type enums applied to the event source mapping.</p>
+    /// <p>(Streams and Amazon SQS) A list of current response type enums applied to the event source mapping.</p>
     #[serde(rename = "FunctionResponseTypes")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub function_response_types: Option<Vec<String>>,
-    /// <p>(Streams and SQS standard queues) The maximum amount of time to gather records before invoking the function, in seconds.</p>
+    /// <p>(Streams and Amazon SQS standard queues) The maximum amount of time, in seconds, that Lambda spends gathering records before invoking the function.</p> <p>Default: 0</p> <p>Related setting: When you set <code>BatchSize</code> to a value greater than 10, you must set <code>MaximumBatchingWindowInSeconds</code> to at least 1.</p>
     #[serde(rename = "MaximumBatchingWindowInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_batching_window_in_seconds: Option<i64>,
-    /// <p>(Streams) Discard records older than the specified age. The default value is infinite (-1).</p>
+    /// <p>(Streams only) Discard records older than the specified age. The default value is infinite (-1).</p>
     #[serde(rename = "MaximumRecordAgeInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_record_age_in_seconds: Option<i64>,
-    /// <p>(Streams) Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records will be retried until the record expires.</p>
+    /// <p>(Streams only) Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records will be retried until the record expires.</p>
     #[serde(rename = "MaximumRetryAttempts")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_retry_attempts: Option<i64>,
-    /// <p>(Streams) The number of batches to process from each shard concurrently.</p>
+    /// <p>(Streams only) The number of batches to process from each shard concurrently.</p>
     #[serde(rename = "ParallelizationFactor")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parallelization_factor: Option<i64>,
@@ -342,7 +346,7 @@ pub struct CreateEventSourceMappingRequest {
     #[serde(rename = "SelfManagedEventSource")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub self_managed_event_source: Option<SelfManagedEventSource>,
-    /// <p>An array of the authentication protocol, or the VPC components to secure your event source.</p>
+    /// <p>An array of authentication protocols or VPC components required to secure your event source.</p>
     #[serde(rename = "SourceAccessConfigurations")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source_access_configurations: Option<Vec<SourceAccessConfiguration>>,
@@ -358,7 +362,7 @@ pub struct CreateEventSourceMappingRequest {
     #[serde(rename = "Topics")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub topics: Option<Vec<String>>,
-    /// <p>(Streams) The duration in seconds of a processing window. The range is between 1 second up to 900 seconds.</p>
+    /// <p>(Streams only) The duration in seconds of a processing window. The range is between 1 second up to 900 seconds.</p>
     #[serde(rename = "TumblingWindowInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tumbling_window_in_seconds: Option<i64>,
@@ -367,6 +371,10 @@ pub struct CreateEventSourceMappingRequest {
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct CreateFunctionRequest {
+    /// <p>The instruction set architecture that the function supports. Enter a string array with one of the valid values (arm64 or x86_64). The default value is <code>x86_64</code>.</p>
+    #[serde(rename = "Architectures")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub architectures: Option<Vec<String>>,
     /// <p>The code for the function.</p>
     #[serde(rename = "Code")]
     pub code: FunctionCode,
@@ -393,15 +401,15 @@ pub struct CreateFunctionRequest {
     /// <p>The name of the Lambda function.</p> <p class="title"> <b>Name formats</b> </p> <ul> <li> <p> <b>Function name</b> - <code>my-function</code>.</p> </li> <li> <p> <b>Function ARN</b> - <code>arn:aws:lambda:us-west-2:123456789012:function:my-function</code>.</p> </li> <li> <p> <b>Partial ARN</b> - <code>123456789012:function:my-function</code>.</p> </li> </ul> <p>The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.</p>
     #[serde(rename = "FunctionName")]
     pub function_name: String,
-    /// <p>The name of the method within your code that Lambda calls to execute your function. The format includes the file name. It can also include namespaces and other qualifiers, depending on the runtime. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html">Programming Model</a>.</p>
+    /// <p>The name of the method within your code that Lambda calls to execute your function. Handler is required if the deployment package is a .zip file archive. The format includes the file name. It can also include namespaces and other qualifiers, depending on the runtime. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html">Programming Model</a>.</p>
     #[serde(rename = "Handler")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub handler: Option<String>,
-    /// <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/images-parms.html">Container image configuration values</a> that override the values in the container image Dockerfile.</p>
+    /// <p>Container image <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-images.html#configuration-images-settings">configuration values</a> that override the values in the container image Dockerfile.</p>
     #[serde(rename = "ImageConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub image_config: Option<ImageConfig>,
-    /// <p>The ARN of the AWS Key Management Service (AWS KMS) key that's used to encrypt your function's environment variables. If it's not provided, AWS Lambda uses a default service key.</p>
+    /// <p>The ARN of the Amazon Web Services Key Management Service (KMS) key that's used to encrypt your function's environment variables. If it's not provided, Lambda uses a default service key.</p>
     #[serde(rename = "KMSKeyArn")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kms_key_arn: Option<String>,
@@ -409,7 +417,7 @@ pub struct CreateFunctionRequest {
     #[serde(rename = "Layers")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub layers: Option<Vec<String>>,
-    /// <p>The amount of memory available to the function at runtime. Increasing the function's memory also increases its CPU allocation. The default value is 128 MB. The value can be any multiple of 1 MB.</p>
+    /// <p>The amount of <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html">memory available to the function</a> at runtime. Increasing the function memory also increases its CPU allocation. The default value is 128 MB. The value can be any multiple of 1 MB.</p>
     #[serde(rename = "MemorySize")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub memory_size: Option<i64>,
@@ -424,7 +432,7 @@ pub struct CreateFunctionRequest {
     /// <p>The Amazon Resource Name (ARN) of the function's execution role.</p>
     #[serde(rename = "Role")]
     pub role: String,
-    /// <p>The identifier of the function's <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime</a>.</p>
+    /// <p>The identifier of the function's <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime</a>. Runtime is required if the deployment package is a .zip file archive. </p>
     #[serde(rename = "Runtime")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub runtime: Option<String>,
@@ -432,15 +440,15 @@ pub struct CreateFunctionRequest {
     #[serde(rename = "Tags")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tags: Option<::std::collections::HashMap<String, String>>,
-    /// <p>The amount of time that Lambda allows a function to run before stopping it. The default is 3 seconds. The maximum allowed value is 900 seconds.</p>
+    /// <p>The amount of time (in seconds) that Lambda allows a function to run before stopping it. The default is 3 seconds. The maximum allowed value is 900 seconds. For additional information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-context.html">Lambda execution environment</a>.</p>
     #[serde(rename = "Timeout")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub timeout: Option<i64>,
-    /// <p>Set <code>Mode</code> to <code>Active</code> to sample and trace a subset of incoming requests with AWS X-Ray.</p>
+    /// <p>Set <code>Mode</code> to <code>Active</code> to sample and trace a subset of incoming requests with <a href="https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html">X-Ray</a>.</p>
     #[serde(rename = "TracingConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tracing_config: Option<TracingConfig>,
-    /// <p>For network connectivity to AWS resources in a VPC, specify a list of security groups and subnets in the VPC. When you connect a function to a VPC, it can only access resources and the internet through that VPC. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html">VPC Settings</a>.</p>
+    /// <p>For network connectivity to Amazon Web Services resources in a VPC, specify a list of security groups and subnets in the VPC. When you connect a function to a VPC, it can only access resources and the internet through that VPC. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html">VPC Settings</a>.</p>
     #[serde(rename = "VpcConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vpc_config: Option<VpcConfig>,
@@ -561,11 +569,11 @@ pub struct DestinationConfig {
     pub on_success: Option<OnSuccess>,
 }
 
-/// <p>A function's environment variable settings.</p>
+/// <p>A function's environment variable settings. You can use environment variables to adjust your function's behavior without updating code. An environment variable is a pair of strings that are stored in a function's version-specific configuration. </p>
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct Environment {
-    /// <p>Environment variable key-value pairs.</p>
+    /// <p>Environment variable key-value pairs. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html">Using Lambda environment variables</a>.</p>
     #[serde(rename = "Variables")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub variables: Option<::std::collections::HashMap<String, String>>,
@@ -599,19 +607,19 @@ pub struct EnvironmentResponse {
     pub variables: Option<::std::collections::HashMap<String, String>>,
 }
 
-/// <p>A mapping between an AWS resource and an AWS Lambda function. See <a>CreateEventSourceMapping</a> for details.</p>
+/// <p>A mapping between an Amazon Web Services resource and a Lambda function. For details, see <a>CreateEventSourceMapping</a>.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct EventSourceMappingConfiguration {
-    /// <p>The maximum number of items to retrieve in a single batch.</p>
+    /// <p>The maximum number of records in each batch that Lambda pulls from your stream or queue and sends to your function. Lambda passes all of the records in the batch to the function in a single call, up to the payload limit for synchronous invocation (6 MB).</p> <p>Default value: Varies by service. For Amazon SQS, the default is 10. For all other services, the default is 100.</p> <p>Related setting: When you set <code>BatchSize</code> to a value greater than 10, you must set <code>MaximumBatchingWindowInSeconds</code> to at least 1.</p>
     #[serde(rename = "BatchSize")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub batch_size: Option<i64>,
-    /// <p>(Streams) If the function returns an error, split the batch in two and retry. The default value is false.</p>
+    /// <p>(Streams only) If the function returns an error, split the batch in two and retry. The default value is false.</p>
     #[serde(rename = "BisectBatchOnFunctionError")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bisect_batch_on_function_error: Option<bool>,
-    /// <p>(Streams) An Amazon SQS queue or Amazon SNS topic destination for discarded records.</p>
+    /// <p>(Streams only) An Amazon SQS queue or Amazon SNS topic destination for discarded records.</p>
     #[serde(rename = "DestinationConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub destination_config: Option<DestinationConfig>,
@@ -619,51 +627,55 @@ pub struct EventSourceMappingConfiguration {
     #[serde(rename = "EventSourceArn")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub event_source_arn: Option<String>,
+    /// <p>(Streams and Amazon SQS) An object that defines the filter criteria that determine whether Lambda should process an event. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventfiltering.html">Lambda event filtering</a>.</p>
+    #[serde(rename = "FilterCriteria")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filter_criteria: Option<FilterCriteria>,
     /// <p>The ARN of the Lambda function.</p>
     #[serde(rename = "FunctionArn")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub function_arn: Option<String>,
-    /// <p>(Streams) A list of current response type enums applied to the event source mapping.</p>
+    /// <p>(Streams only) A list of current response type enums applied to the event source mapping.</p>
     #[serde(rename = "FunctionResponseTypes")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub function_response_types: Option<Vec<String>>,
-    /// <p>The date that the event source mapping was last updated, or its state changed.</p>
+    /// <p>The date that the event source mapping was last updated or that its state changed.</p>
     #[serde(rename = "LastModified")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_modified: Option<f64>,
-    /// <p>The result of the last AWS Lambda invocation of your Lambda function.</p>
+    /// <p>The result of the last Lambda invocation of your function.</p>
     #[serde(rename = "LastProcessingResult")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_processing_result: Option<String>,
-    /// <p>(Streams and SQS standard queues) The maximum amount of time to gather records before invoking the function, in seconds. The default value is zero.</p>
+    /// <p>(Streams and Amazon SQS standard queues) The maximum amount of time, in seconds, that Lambda spends gathering records before invoking the function.</p> <p>Default: 0</p> <p>Related setting: When you set <code>BatchSize</code> to a value greater than 10, you must set <code>MaximumBatchingWindowInSeconds</code> to at least 1.</p>
     #[serde(rename = "MaximumBatchingWindowInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_batching_window_in_seconds: Option<i64>,
-    /// <p>(Streams) Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p>
+    /// <p>(Streams only) Discard records older than the specified age. The default value is -1, which sets the maximum age to infinite. When the value is set to infinite, Lambda never discards old records. </p>
     #[serde(rename = "MaximumRecordAgeInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_record_age_in_seconds: Option<i64>,
-    /// <p>(Streams) Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p>
+    /// <p>(Streams only) Discard records after the specified number of retries. The default value is -1, which sets the maximum number of retries to infinite. When MaximumRetryAttempts is infinite, Lambda retries failed records until the record expires in the event source.</p>
     #[serde(rename = "MaximumRetryAttempts")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_retry_attempts: Option<i64>,
-    /// <p>(Streams) The number of batches to process from each shard concurrently. The default value is 1.</p>
+    /// <p>(Streams only) The number of batches to process concurrently from each shard. The default value is 1.</p>
     #[serde(rename = "ParallelizationFactor")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parallelization_factor: Option<i64>,
-    /// <p> (MQ) The name of the Amazon MQ broker destination queue to consume. </p>
+    /// <p> (Amazon MQ) The name of the Amazon MQ broker destination queue to consume.</p>
     #[serde(rename = "Queues")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub queues: Option<Vec<String>>,
-    /// <p>The Self-Managed Apache Kafka cluster for your event source.</p>
+    /// <p>The self-managed Apache Kafka cluster for your event source.</p>
     #[serde(rename = "SelfManagedEventSource")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub self_managed_event_source: Option<SelfManagedEventSource>,
-    /// <p>An array of the authentication protocol, or the VPC components to secure your event source.</p>
+    /// <p>An array of the authentication protocol, VPC components, or virtual host to secure and define your event source.</p>
     #[serde(rename = "SourceAccessConfigurations")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source_access_configurations: Option<Vec<SourceAccessConfiguration>>,
-    /// <p>The position in a stream from which to start reading. Required for Amazon Kinesis, Amazon DynamoDB, and Amazon MSK Streams sources. <code>AT_TIMESTAMP</code> is only supported for Amazon Kinesis streams.</p>
+    /// <p>The position in a stream from which to start reading. Required for Amazon Kinesis, Amazon DynamoDB, and Amazon MSK stream sources. <code>AT_TIMESTAMP</code> is supported only for Amazon Kinesis streams.</p>
     #[serde(rename = "StartingPosition")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub starting_position: Option<String>,
@@ -675,7 +687,7 @@ pub struct EventSourceMappingConfiguration {
     #[serde(rename = "State")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub state: Option<String>,
-    /// <p>Indicates whether the last change to the event source mapping was made by a user, or by the Lambda service.</p>
+    /// <p>Indicates whether a user or Lambda made the last change to the event source mapping.</p>
     #[serde(rename = "StateTransitionReason")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub state_transition_reason: Option<String>,
@@ -683,7 +695,7 @@ pub struct EventSourceMappingConfiguration {
     #[serde(rename = "Topics")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub topics: Option<Vec<String>>,
-    /// <p>(Streams) The duration in seconds of a processing window. The range is between 1 second up to 900 seconds.</p>
+    /// <p>(Streams only) The duration in seconds of a processing window. The range is 1–900 seconds.</p>
     #[serde(rename = "TumblingWindowInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tumbling_window_in_seconds: Option<i64>,
@@ -693,7 +705,7 @@ pub struct EventSourceMappingConfiguration {
     pub uuid: Option<String>,
 }
 
-/// <p>Details about the connection between a Lambda function and an Amazon EFS file system.</p>
+/// <p>Details about the connection between a Lambda function and an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-filesystem.html">Amazon EFS file system</a>.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct FileSystemConfig {
     /// <p>The Amazon Resource Name (ARN) of the Amazon EFS access point that provides access to the file system.</p>
@@ -704,15 +716,33 @@ pub struct FileSystemConfig {
     pub local_mount_path: String,
 }
 
+/// <p> A structure within a <code>FilterCriteria</code> object that defines an event filtering pattern. </p>
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
+pub struct Filter {
+    /// <p> A filter pattern. For more information on the syntax of a filter pattern, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventfiltering.html#filtering-syntax"> Filter rule syntax</a>. </p>
+    #[serde(rename = "Pattern")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<String>,
+}
+
+/// <p> An object that contains the filters for an event source. </p>
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
+pub struct FilterCriteria {
+    /// <p> A list of filters. </p>
+    #[serde(rename = "Filters")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filters: Option<Vec<Filter>>,
+}
+
 /// <p>The code for the Lambda function. You can specify either an object in Amazon S3, upload a .zip file archive deployment package directly, or specify the URI of a container image.</p>
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct FunctionCode {
-    /// <p>URI of a container image in the Amazon ECR registry.</p>
+    /// <p>URI of a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html">container image</a> in the Amazon ECR registry.</p>
     #[serde(rename = "ImageUri")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub image_uri: Option<String>,
-    /// <p>An Amazon S3 bucket in the same AWS Region as your function. The bucket can be in a different AWS account.</p>
+    /// <p>An Amazon S3 bucket in the same Amazon Web Services Region as your function. The bucket can be in a different Amazon Web Services account.</p>
     #[serde(rename = "S3Bucket")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub s3_bucket: Option<String>,
@@ -724,7 +754,7 @@ pub struct FunctionCode {
     #[serde(rename = "S3ObjectVersion")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub s3_object_version: Option<String>,
-    /// <p>The base64-encoded contents of the deployment package. AWS SDK and AWS CLI clients handle the encoding for you.</p>
+    /// <p>The base64-encoded contents of the deployment package. Amazon Web Services SDK and Amazon Web Services CLI clients handle the encoding for you.</p>
     #[serde(rename = "ZipFile")]
     #[serde(
         deserialize_with = "::rusoto_core::serialization::SerdeBlob::deserialize_blob",
@@ -761,6 +791,10 @@ pub struct FunctionCodeLocation {
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct FunctionConfiguration {
+    /// <p>The instruction set architecture that the function supports. Architecture is a string array with one of the valid values. The default architecture value is <code>x86_64</code>.</p>
+    #[serde(rename = "Architectures")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub architectures: Option<Vec<String>>,
     /// <p>The SHA256 hash of the function's deployment package.</p>
     #[serde(rename = "CodeSha256")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -777,11 +811,11 @@ pub struct FunctionConfiguration {
     #[serde(rename = "Description")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    /// <p>The function's environment variables.</p>
+    /// <p>The function's <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html">environment variables</a>.</p>
     #[serde(rename = "Environment")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub environment: Option<EnvironmentResponse>,
-    /// <p>Connection settings for an Amazon EFS file system.</p>
+    /// <p>Connection settings for an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-filesystem.html">Amazon EFS file system</a>.</p>
     #[serde(rename = "FileSystemConfigs")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_system_configs: Option<Vec<FileSystemConfig>>,
@@ -801,7 +835,7 @@ pub struct FunctionConfiguration {
     #[serde(rename = "ImageConfigResponse")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub image_config_response: Option<ImageConfigResponse>,
-    /// <p>The KMS key that's used to encrypt the function's environment variables. This key is only returned if you've configured a customer managed CMK.</p>
+    /// <p>The KMS key that's used to encrypt the function's environment variables. This key is only returned if you've configured a customer managed key.</p>
     #[serde(rename = "KMSKeyArn")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kms_key_arn: Option<String>,
@@ -825,7 +859,7 @@ pub struct FunctionConfiguration {
     #[serde(rename = "Layers")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub layers: Option<Vec<Layer>>,
-    /// <p>For Lambda@Edge functions, the ARN of the master function.</p>
+    /// <p>For Lambda@Edge functions, the ARN of the main function.</p>
     #[serde(rename = "MasterArn")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub master_arn: Option<String>,
@@ -873,7 +907,7 @@ pub struct FunctionConfiguration {
     #[serde(rename = "Timeout")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub timeout: Option<i64>,
-    /// <p>The function's AWS X-Ray tracing configuration.</p>
+    /// <p>The function's X-Ray tracing configuration.</p>
     #[serde(rename = "TracingConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tracing_config: Option<TracingConfigResponse>,
@@ -1103,6 +1137,10 @@ pub struct GetLayerVersionRequest {
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct GetLayerVersionResponse {
+    /// <p>A list of compatible <a href="https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html">instruction set architectures</a>.</p>
+    #[serde(rename = "CompatibleArchitectures")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub compatible_architectures: Option<Vec<String>>,
     /// <p>The layer's compatible runtimes.</p>
     #[serde(rename = "CompatibleRuntimes")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1261,11 +1299,11 @@ pub struct InvocationRequest {
     #[serde(rename = "InvocationType")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub invocation_type: Option<String>,
-    /// <p>Set to <code>Tail</code> to include the execution log in the response.</p>
+    /// <p>Set to <code>Tail</code> to include the execution log in the response. Applies to synchronously invoked functions only.</p>
     #[serde(rename = "LogType")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub log_type: Option<String>,
-    /// <p>The JSON that you want to provide to your Lambda function as input.</p>
+    /// <p>The JSON that you want to provide to your Lambda function as input.</p> <p>You can enter the JSON directly. For example, <code>--payload '{ "key": "value" }'</code>. You can also specify a file path. For example, <code>--payload file://payload.json</code>. </p>
     #[serde(rename = "Payload")]
     #[serde(
         deserialize_with = "::rusoto_core::serialization::SerdeBlob::deserialize_blob",
@@ -1320,7 +1358,7 @@ pub struct InvokeAsyncResponse {
     pub status: Option<i64>,
 }
 
-/// <p>An <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>.</p>
+/// <p>An <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct Layer {
@@ -1342,7 +1380,7 @@ pub struct Layer {
     pub signing_profile_version_arn: Option<String>,
 }
 
-/// <p>A ZIP archive that contains the contents of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. You can specify either an Amazon S3 location, or upload a layer archive directly.</p>
+/// <p>A ZIP archive that contains the contents of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. You can specify either an Amazon S3 location, or upload a layer archive directly.</p>
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct LayerVersionContentInput {
@@ -1358,7 +1396,7 @@ pub struct LayerVersionContentInput {
     #[serde(rename = "S3ObjectVersion")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub s3_object_version: Option<String>,
-    /// <p>The base64-encoded contents of the layer archive. AWS SDK and AWS CLI clients handle the encoding for you.</p>
+    /// <p>The base64-encoded contents of the layer archive. Amazon Web Services SDK and Amazon Web Services CLI clients handle the encoding for you.</p>
     #[serde(rename = "ZipFile")]
     #[serde(
         deserialize_with = "::rusoto_core::serialization::SerdeBlob::deserialize_blob",
@@ -1369,7 +1407,7 @@ pub struct LayerVersionContentInput {
     pub zip_file: Option<bytes::Bytes>,
 }
 
-/// <p>Details about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>.</p>
+/// <p>Details about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct LayerVersionContentOutput {
@@ -1395,10 +1433,14 @@ pub struct LayerVersionContentOutput {
     pub signing_profile_version_arn: Option<String>,
 }
 
-/// <p>Details about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>.</p>
+/// <p>Details about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct LayerVersionsListItem {
+    /// <p>A list of compatible <a href="https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html">instruction set architectures</a>.</p>
+    #[serde(rename = "CompatibleArchitectures")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub compatible_architectures: Option<Vec<String>>,
     /// <p>The layer's compatible runtimes.</p>
     #[serde(rename = "CompatibleRuntimes")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1425,7 +1467,7 @@ pub struct LayerVersionsListItem {
     pub version: Option<i64>,
 }
 
-/// <p>Details about an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>.</p>
+/// <p>Details about an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct LayersListItem {
@@ -1517,7 +1559,7 @@ pub struct ListEventSourceMappingsRequest {
     #[serde(rename = "Marker")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub marker: Option<String>,
-    /// <p>The maximum number of event source mappings to return.</p>
+    /// <p>The maximum number of event source mappings to return. Note that ListEventSourceMappings returns a maximum of 100 items in each response, even if you set the number higher.</p>
     #[serde(rename = "MaxItems")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_items: Option<i64>,
@@ -1605,7 +1647,7 @@ pub struct ListFunctionsRequest {
     #[serde(rename = "Marker")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub marker: Option<String>,
-    /// <p>For Lambda@Edge functions, the AWS Region of the master function. For example, <code>us-east-1</code> filters the list of functions to only include Lambda@Edge functions replicated from a master function in US East (N. Virginia). If specified, you must set <code>FunctionVersion</code> to <code>ALL</code>.</p>
+    /// <p>For Lambda@Edge functions, the Amazon Web Services Region of the master function. For example, <code>us-east-1</code> filters the list of functions to only include Lambda@Edge functions replicated from a master function in US East (N. Virginia). If specified, you must set <code>FunctionVersion</code> to <code>ALL</code>.</p>
     #[serde(rename = "MasterRegion")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub master_region: Option<String>,
@@ -1632,6 +1674,10 @@ pub struct ListFunctionsResponse {
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct ListLayerVersionsRequest {
+    /// <p>The compatible <a href="https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html">instruction set architecture</a>.</p>
+    #[serde(rename = "CompatibleArchitecture")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub compatible_architecture: Option<String>,
     /// <p>A runtime identifier. For example, <code>go1.x</code>.</p>
     #[serde(rename = "CompatibleRuntime")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1665,6 +1711,10 @@ pub struct ListLayerVersionsResponse {
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct ListLayersRequest {
+    /// <p>The compatible <a href="https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html">instruction set architecture</a>.</p>
+    #[serde(rename = "CompatibleArchitecture")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub compatible_architecture: Option<String>,
     /// <p>A runtime identifier. For example, <code>go1.x</code>.</p>
     #[serde(rename = "CompatibleRuntime")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1724,7 +1774,7 @@ pub struct ListProvisionedConcurrencyConfigsResponse {
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct ListTagsRequest {
-    /// <p>The function's Amazon Resource Name (ARN).</p>
+    /// <p>The function's Amazon Resource Name (ARN). Note: Lambda does not support adding tags to aliases or versions.</p>
     #[serde(rename = "Resource")]
     pub resource: String,
 }
@@ -1748,7 +1798,7 @@ pub struct ListVersionsByFunctionRequest {
     #[serde(rename = "Marker")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub marker: Option<String>,
-    /// <p>The maximum number of versions to return.</p>
+    /// <p>The maximum number of versions to return. Note that <code>ListVersionsByFunction</code> returns a maximum of 50 items in each response, even if you set the number higher.</p>
     #[serde(rename = "MaxItems")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_items: Option<i64>,
@@ -1822,6 +1872,10 @@ pub struct ProvisionedConcurrencyConfigListItem {
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct PublishLayerVersionRequest {
+    /// <p>A list of compatible <a href="https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html">instruction set architectures</a>.</p>
+    #[serde(rename = "CompatibleArchitectures")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub compatible_architectures: Option<Vec<String>>,
     /// <p>A list of compatible <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">function runtimes</a>. Used for filtering with <a>ListLayers</a> and <a>ListLayerVersions</a>.</p>
     #[serde(rename = "CompatibleRuntimes")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1845,6 +1899,10 @@ pub struct PublishLayerVersionRequest {
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct PublishLayerVersionResponse {
+    /// <p>A list of compatible <a href="https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html">instruction set architectures</a>.</p>
+    #[serde(rename = "CompatibleArchitectures")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub compatible_architectures: Option<Vec<String>>,
     /// <p>The layer's compatible runtimes.</p>
     #[serde(rename = "CompatibleRuntimes")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2036,7 +2094,7 @@ pub struct RemovePermissionRequest {
     pub statement_id: String,
 }
 
-/// <p>The Self-Managed Apache Kafka cluster for your event source.</p>
+/// <p>The self-managed Apache Kafka cluster for your event source.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct SelfManagedEventSource {
     /// <p>The list of bootstrap servers for your Kafka brokers in the following format: <code>"KAFKA_BOOTSTRAP_SERVERS": ["abc.xyz.com:xxxx","abc2.xyz.com:xxxx"]</code>.</p>
@@ -2045,10 +2103,10 @@ pub struct SelfManagedEventSource {
     pub endpoints: Option<::std::collections::HashMap<String, Vec<String>>>,
 }
 
-/// <p>You can specify the authentication protocol, or the VPC components to secure access to your event source.</p>
+/// <p>To secure and define access to your event source, you can specify the authentication protocol, VPC components, or virtual host.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct SourceAccessConfiguration {
-    /// <p><p>The type of authentication protocol or the VPC components for your event source. For example: <code>&quot;Type&quot;:&quot;SASL<em>SCRAM</em>512<em>AUTH&quot;</code>.</p> <ul> <li> <p> <code>BASIC</em>AUTH</code> - (MQ) The Secrets Manager secret that stores your broker credentials.</p> </li> <li> <p> <code>VPC<em>SUBNET</code> - The subnets associated with your VPC. Lambda connects to these subnets to fetch data from your Self-Managed Apache Kafka cluster.</p> </li> <li> <p> <code>VPC</em>SECURITY<em>GROUP</code> - The VPC security group used to manage access to your Self-Managed Apache Kafka brokers.</p> </li> <li> <p> <code>SASL</em>SCRAM<em>256</em>AUTH</code> - The Secrets Manager ARN of your secret key used for SASL SCRAM-256 authentication of your Self-Managed Apache Kafka brokers.</p> </li> <li> <p> <code>SASL<em>SCRAM</em>512_AUTH</code> - The Secrets Manager ARN of your secret key used for SASL SCRAM-512 authentication of your Self-Managed Apache Kafka brokers.</p> </li> </ul></p>
+    /// <p><p>The type of authentication protocol, VPC components, or virtual host for your event source. For example: <code>&quot;Type&quot;:&quot;SASL<em>SCRAM</em>512<em>AUTH&quot;</code>.</p> <ul> <li> <p> <code>BASIC</em>AUTH</code> - (Amazon MQ) The Secrets Manager secret that stores your broker credentials.</p> </li> <li> <p> <code>BASIC<em>AUTH</code> - (Self-managed Apache Kafka) The Secrets Manager ARN of your secret key used for SASL/PLAIN authentication of your Apache Kafka brokers.</p> </li> <li> <p> <code>VPC</em>SUBNET</code> - The subnets associated with your VPC. Lambda connects to these subnets to fetch data from your self-managed Apache Kafka cluster.</p> </li> <li> <p> <code>VPC<em>SECURITY</em>GROUP</code> - The VPC security group used to manage access to your self-managed Apache Kafka brokers.</p> </li> <li> <p> <code>SASL<em>SCRAM</em>256<em>AUTH</code> - The Secrets Manager ARN of your secret key used for SASL SCRAM-256 authentication of your self-managed Apache Kafka brokers.</p> </li> <li> <p> <code>SASL</em>SCRAM<em>512</em>AUTH</code> - The Secrets Manager ARN of your secret key used for SASL SCRAM-512 authentication of your self-managed Apache Kafka brokers.</p> </li> <li> <p> <code>VIRTUAL<em>HOST</code> - (Amazon MQ) The name of the virtual host in your RabbitMQ broker. Lambda uses this RabbitMQ host as the event source. This property cannot be specified in an UpdateEventSourceMapping API call.</p> </li> <li> <p> <code>CLIENT</em>CERTIFICATE<em>TLS</em>AUTH</code> - (Amazon MSK, Self-managed Apache Kafka) The Secrets Manager ARN of your secret key containing the certificate chain (X.509 PEM), private key (PKCS#8 PEM), and private key password (optional) used for mutual TLS authentication of your MSK/Apache Kafka brokers.</p> </li> <li> <p> <code>SERVER<em>ROOT</em>CA_CERTIFICATE</code> - (Self-managed Apache Kafka) The Secrets Manager ARN of your secret key containing the root CA certificate (X.509 PEM) used for TLS encryption of your Apache Kafka brokers. </p> </li> </ul></p>
     #[serde(rename = "Type")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub type_: Option<String>,
@@ -2069,7 +2127,7 @@ pub struct TagResourceRequest {
     pub tags: ::std::collections::HashMap<String, String>,
 }
 
-/// <p>The function's AWS X-Ray tracing configuration. To sample and record incoming requests, set <code>Mode</code> to <code>Active</code>.</p>
+/// <p>The function's <a href="https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html">X-Ray</a> tracing configuration. To sample and record incoming requests, set <code>Mode</code> to <code>Active</code>.</p>
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct TracingConfig {
@@ -2079,7 +2137,7 @@ pub struct TracingConfig {
     pub mode: Option<String>,
 }
 
-/// <p>The function's AWS X-Ray tracing configuration.</p>
+/// <p>The function's X-Ray tracing configuration.</p>
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 #[cfg_attr(any(test, feature = "serialize_structs"), derive(Serialize))]
 pub struct TracingConfigResponse {
@@ -2158,51 +2216,55 @@ pub struct UpdateCodeSigningConfigResponse {
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct UpdateEventSourceMappingRequest {
-    /// <p><p>The maximum number of items to retrieve in a single batch.</p> <ul> <li> <p> <b>Amazon Kinesis</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Amazon DynamoDB Streams</b> - Default 100. Max 1,000.</p> </li> <li> <p> <b>Amazon Simple Queue Service</b> - Default 10. For standard queues the max is 10,000. For FIFO queues the max is 10.</p> </li> <li> <p> <b>Amazon Managed Streaming for Apache Kafka</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Self-Managed Apache Kafka</b> - Default 100. Max 10,000.</p> </li> </ul></p>
+    /// <p><p>The maximum number of records in each batch that Lambda pulls from your stream or queue and sends to your function. Lambda passes all of the records in the batch to the function in a single call, up to the payload limit for synchronous invocation (6 MB).</p> <ul> <li> <p> <b>Amazon Kinesis</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Amazon DynamoDB Streams</b> - Default 100. Max 1,000.</p> </li> <li> <p> <b>Amazon Simple Queue Service</b> - Default 10. For standard queues the max is 10,000. For FIFO queues the max is 10.</p> </li> <li> <p> <b>Amazon Managed Streaming for Apache Kafka</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Self-Managed Apache Kafka</b> - Default 100. Max 10,000.</p> </li> <li> <p> <b>Amazon MQ (ActiveMQ and RabbitMQ)</b> - Default 100. Max 10,000.</p> </li> </ul></p>
     #[serde(rename = "BatchSize")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub batch_size: Option<i64>,
-    /// <p>(Streams) If the function returns an error, split the batch in two and retry.</p>
+    /// <p>(Streams only) If the function returns an error, split the batch in two and retry.</p>
     #[serde(rename = "BisectBatchOnFunctionError")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bisect_batch_on_function_error: Option<bool>,
-    /// <p>(Streams) An Amazon SQS queue or Amazon SNS topic destination for discarded records.</p>
+    /// <p>(Streams only) An Amazon SQS queue or Amazon SNS topic destination for discarded records.</p>
     #[serde(rename = "DestinationConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub destination_config: Option<DestinationConfig>,
-    /// <p>If true, the event source mapping is active. Set to false to pause polling and invocation.</p>
+    /// <p>When true, the event source mapping is active. When false, Lambda pauses polling and invocation.</p> <p>Default: True</p>
     #[serde(rename = "Enabled")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
+    /// <p>(Streams and Amazon SQS) An object that defines the filter criteria that determine whether Lambda should process an event. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventfiltering.html">Lambda event filtering</a>.</p>
+    #[serde(rename = "FilterCriteria")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filter_criteria: Option<FilterCriteria>,
     /// <p>The name of the Lambda function.</p> <p class="title"> <b>Name formats</b> </p> <ul> <li> <p> <b>Function name</b> - <code>MyFunction</code>.</p> </li> <li> <p> <b>Function ARN</b> - <code>arn:aws:lambda:us-west-2:123456789012:function:MyFunction</code>.</p> </li> <li> <p> <b>Version or Alias ARN</b> - <code>arn:aws:lambda:us-west-2:123456789012:function:MyFunction:PROD</code>.</p> </li> <li> <p> <b>Partial ARN</b> - <code>123456789012:function:MyFunction</code>.</p> </li> </ul> <p>The length constraint applies only to the full ARN. If you specify only the function name, it's limited to 64 characters in length.</p>
     #[serde(rename = "FunctionName")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub function_name: Option<String>,
-    /// <p>(Streams) A list of current response type enums applied to the event source mapping.</p>
+    /// <p>(Streams and Amazon SQS) A list of current response type enums applied to the event source mapping.</p>
     #[serde(rename = "FunctionResponseTypes")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub function_response_types: Option<Vec<String>>,
-    /// <p>(Streams and SQS standard queues) The maximum amount of time to gather records before invoking the function, in seconds.</p>
+    /// <p>(Streams and Amazon SQS standard queues) The maximum amount of time, in seconds, that Lambda spends gathering records before invoking the function.</p> <p>Default: 0</p> <p>Related setting: When you set <code>BatchSize</code> to a value greater than 10, you must set <code>MaximumBatchingWindowInSeconds</code> to at least 1.</p>
     #[serde(rename = "MaximumBatchingWindowInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_batching_window_in_seconds: Option<i64>,
-    /// <p>(Streams) Discard records older than the specified age. The default value is infinite (-1).</p>
+    /// <p>(Streams only) Discard records older than the specified age. The default value is infinite (-1).</p>
     #[serde(rename = "MaximumRecordAgeInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_record_age_in_seconds: Option<i64>,
-    /// <p>(Streams) Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records will be retried until the record expires.</p>
+    /// <p>(Streams only) Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records will be retried until the record expires.</p>
     #[serde(rename = "MaximumRetryAttempts")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum_retry_attempts: Option<i64>,
-    /// <p>(Streams) The number of batches to process from each shard concurrently.</p>
+    /// <p>(Streams only) The number of batches to process from each shard concurrently.</p>
     #[serde(rename = "ParallelizationFactor")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parallelization_factor: Option<i64>,
-    /// <p>An array of the authentication protocol, or the VPC components to secure your event source.</p>
+    /// <p>An array of authentication protocols or VPC components required to secure your event source.</p>
     #[serde(rename = "SourceAccessConfigurations")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source_access_configurations: Option<Vec<SourceAccessConfiguration>>,
-    /// <p>(Streams) The duration in seconds of a processing window. The range is between 1 second up to 900 seconds.</p>
+    /// <p>(Streams only) The duration in seconds of a processing window. The range is between 1 second up to 900 seconds.</p>
     #[serde(rename = "TumblingWindowInSeconds")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tumbling_window_in_seconds: Option<i64>,
@@ -2214,6 +2276,10 @@ pub struct UpdateEventSourceMappingRequest {
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
 #[cfg_attr(feature = "deserialize_structs", derive(Deserialize))]
 pub struct UpdateFunctionCodeRequest {
+    /// <p>The instruction set architecture that the function supports. Enter a string array with one of the valid values (arm64 or x86_64). The default value is <code>x86_64</code>.</p>
+    #[serde(rename = "Architectures")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub architectures: Option<Vec<String>>,
     /// <p>Set to true to validate the request parameters and access permissions without modifying the function code.</p>
     #[serde(rename = "DryRun")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2233,7 +2299,7 @@ pub struct UpdateFunctionCodeRequest {
     #[serde(rename = "RevisionId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub revision_id: Option<String>,
-    /// <p>An Amazon S3 bucket in the same AWS Region as your function. The bucket can be in a different AWS account.</p>
+    /// <p>An Amazon S3 bucket in the same Amazon Web Services Region as your function. The bucket can be in a different Amazon Web Services account.</p>
     #[serde(rename = "S3Bucket")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub s3_bucket: Option<String>,
@@ -2245,7 +2311,7 @@ pub struct UpdateFunctionCodeRequest {
     #[serde(rename = "S3ObjectVersion")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub s3_object_version: Option<String>,
-    /// <p>The base64-encoded contents of the deployment package. AWS SDK and AWS CLI clients handle the encoding for you.</p>
+    /// <p>The base64-encoded contents of the deployment package. Amazon Web Services SDK and Amazon Web Services CLI clients handle the encoding for you.</p>
     #[serde(rename = "ZipFile")]
     #[serde(
         deserialize_with = "::rusoto_core::serialization::SerdeBlob::deserialize_blob",
@@ -2278,15 +2344,15 @@ pub struct UpdateFunctionConfigurationRequest {
     /// <p>The name of the Lambda function.</p> <p class="title"> <b>Name formats</b> </p> <ul> <li> <p> <b>Function name</b> - <code>my-function</code>.</p> </li> <li> <p> <b>Function ARN</b> - <code>arn:aws:lambda:us-west-2:123456789012:function:my-function</code>.</p> </li> <li> <p> <b>Partial ARN</b> - <code>123456789012:function:my-function</code>.</p> </li> </ul> <p>The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.</p>
     #[serde(rename = "FunctionName")]
     pub function_name: String,
-    /// <p>The name of the method within your code that Lambda calls to execute your function. The format includes the file name. It can also include namespaces and other qualifiers, depending on the runtime. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html">Programming Model</a>.</p>
+    /// <p>The name of the method within your code that Lambda calls to execute your function. Handler is required if the deployment package is a .zip file archive. The format includes the file name. It can also include namespaces and other qualifiers, depending on the runtime. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html">Programming Model</a>.</p>
     #[serde(rename = "Handler")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub handler: Option<String>,
-    /// <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/images-parms.html">Container image configuration values</a> that override the values in the container image Dockerfile.</p>
+    /// <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/images-parms.html">Container image configuration values</a> that override the values in the container image Docker file.</p>
     #[serde(rename = "ImageConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub image_config: Option<ImageConfig>,
-    /// <p>The ARN of the AWS Key Management Service (AWS KMS) key that's used to encrypt your function's environment variables. If it's not provided, AWS Lambda uses a default service key.</p>
+    /// <p>The ARN of the Amazon Web Services Key Management Service (KMS) key that's used to encrypt your function's environment variables. If it's not provided, Lambda uses a default service key.</p>
     #[serde(rename = "KMSKeyArn")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kms_key_arn: Option<String>,
@@ -2294,7 +2360,7 @@ pub struct UpdateFunctionConfigurationRequest {
     #[serde(rename = "Layers")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub layers: Option<Vec<String>>,
-    /// <p>The amount of memory available to the function at runtime. Increasing the function's memory also increases its CPU allocation. The default value is 128 MB. The value can be any multiple of 1 MB.</p>
+    /// <p>The amount of <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html">memory available to the function</a> at runtime. Increasing the function memory also increases its CPU allocation. The default value is 128 MB. The value can be any multiple of 1 MB.</p>
     #[serde(rename = "MemorySize")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub memory_size: Option<i64>,
@@ -2306,19 +2372,19 @@ pub struct UpdateFunctionConfigurationRequest {
     #[serde(rename = "Role")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub role: Option<String>,
-    /// <p>The identifier of the function's <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime</a>.</p>
+    /// <p>The identifier of the function's <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime</a>. Runtime is required if the deployment package is a .zip file archive. </p>
     #[serde(rename = "Runtime")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub runtime: Option<String>,
-    /// <p>The amount of time that Lambda allows a function to run before stopping it. The default is 3 seconds. The maximum allowed value is 900 seconds.</p>
+    /// <p>The amount of time (in seconds) that Lambda allows a function to run before stopping it. The default is 3 seconds. The maximum allowed value is 900 seconds. For additional information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-context.html">Lambda execution environment</a>.</p>
     #[serde(rename = "Timeout")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub timeout: Option<i64>,
-    /// <p>Set <code>Mode</code> to <code>Active</code> to sample and trace a subset of incoming requests with AWS X-Ray.</p>
+    /// <p>Set <code>Mode</code> to <code>Active</code> to sample and trace a subset of incoming requests with <a href="https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html">X-Ray</a>.</p>
     #[serde(rename = "TracingConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tracing_config: Option<TracingConfig>,
-    /// <p>For network connectivity to AWS resources in a VPC, specify a list of security groups and subnets in the VPC. When you connect a function to a VPC, it can only access resources and the internet through that VPC. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html">VPC Settings</a>.</p>
+    /// <p>For network connectivity to Amazon Web Services resources in a VPC, specify a list of security groups and subnets in the VPC. When you connect a function to a VPC, it can only access resources and the internet through that VPC. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html">VPC Settings</a>.</p>
     #[serde(rename = "VpcConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vpc_config: Option<VpcConfig>,
@@ -2393,7 +2459,7 @@ pub enum AddLayerVersionPermissionError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -2475,7 +2541,7 @@ pub enum AddPermissionError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -2537,7 +2603,7 @@ pub enum CreateAliasError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -2587,7 +2653,7 @@ impl Error for CreateAliasError {}
 pub enum CreateCodeSigningConfigError {
     /// <p>One of the parameters in the request is invalid.</p>
     InvalidParameterValue(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
 }
 
@@ -2631,7 +2697,7 @@ pub enum CreateEventSourceMappingError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -2703,7 +2769,7 @@ pub enum CreateFunctionError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -2777,7 +2843,7 @@ pub enum DeleteAliasError {
     InvalidParameterValue(String),
     /// <p>The resource already exists, or another operation is in progress.</p>
     ResourceConflict(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -2827,7 +2893,7 @@ pub enum DeleteCodeSigningConfigError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
 }
 
@@ -2883,7 +2949,7 @@ pub enum DeleteEventSourceMappingError {
     ResourceInUse(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -2947,7 +3013,7 @@ pub enum DeleteFunctionError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3005,7 +3071,7 @@ pub enum DeleteFunctionCodeSigningConfigError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3087,7 +3153,7 @@ pub enum DeleteFunctionConcurrencyError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3147,9 +3213,11 @@ impl Error for DeleteFunctionConcurrencyError {}
 pub enum DeleteFunctionEventInvokeConfigError {
     /// <p>One of the parameters in the request is invalid.</p>
     InvalidParameterValue(String),
+    /// <p>The resource already exists, or another operation is in progress.</p>
+    ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3164,6 +3232,11 @@ impl DeleteFunctionEventInvokeConfigError {
                 "InvalidParameterValueException" => {
                     return RusotoError::Service(
                         DeleteFunctionEventInvokeConfigError::InvalidParameterValue(err.msg),
+                    )
+                }
+                "ResourceConflictException" => {
+                    return RusotoError::Service(
+                        DeleteFunctionEventInvokeConfigError::ResourceConflict(err.msg),
                     )
                 }
                 "ResourceNotFoundException" => {
@@ -3195,6 +3268,9 @@ impl fmt::Display for DeleteFunctionEventInvokeConfigError {
             DeleteFunctionEventInvokeConfigError::InvalidParameterValue(ref cause) => {
                 write!(f, "{}", cause)
             }
+            DeleteFunctionEventInvokeConfigError::ResourceConflict(ref cause) => {
+                write!(f, "{}", cause)
+            }
             DeleteFunctionEventInvokeConfigError::ResourceNotFound(ref cause) => {
                 write!(f, "{}", cause)
             }
@@ -3209,7 +3285,7 @@ impl Error for DeleteFunctionEventInvokeConfigError {}
 /// Errors returned by DeleteLayerVersion
 #[derive(Debug, PartialEq)]
 pub enum DeleteLayerVersionError {
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3251,7 +3327,7 @@ pub enum DeleteProvisionedConcurrencyConfigError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3319,7 +3395,7 @@ impl Error for DeleteProvisionedConcurrencyConfigError {}
 /// Errors returned by GetAccountSettings
 #[derive(Debug, PartialEq)]
 pub enum GetAccountSettingsError {
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3359,7 +3435,7 @@ pub enum GetAliasError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3405,7 +3481,7 @@ pub enum GetCodeSigningConfigError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
 }
 
@@ -3451,7 +3527,7 @@ pub enum GetEventSourceMappingError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3505,7 +3581,7 @@ pub enum GetFunctionError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3553,7 +3629,7 @@ pub enum GetFunctionCodeSigningConfigError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3615,7 +3691,7 @@ pub enum GetFunctionConcurrencyError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3669,7 +3745,7 @@ pub enum GetFunctionConfigurationError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3725,7 +3801,7 @@ pub enum GetFunctionEventInvokeConfigError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3787,7 +3863,7 @@ pub enum GetLayerVersionError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3837,7 +3913,7 @@ pub enum GetLayerVersionByArnError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3891,7 +3967,7 @@ pub enum GetLayerVersionPolicyError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3945,7 +4021,7 @@ pub enum GetPolicyError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -3995,7 +4071,7 @@ pub enum GetProvisionedConcurrencyConfigError {
     ProvisionedConcurrencyConfigNotFound(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4067,11 +4143,11 @@ impl Error for GetProvisionedConcurrencyConfigError {}
 pub enum InvokeError {
     /// <p>Need additional permissions to configure VPC settings.</p>
     EC2AccessDenied(String),
-    /// <p>AWS Lambda was throttled by Amazon EC2 during Lambda function initialization using the execution role provided for the Lambda function.</p>
+    /// <p>Lambda was throttled by Amazon EC2 during Lambda function initialization using the execution role provided for the Lambda function.</p>
     EC2Throttled(String),
-    /// <p>AWS Lambda received an unexpected EC2 client exception while setting up for the Lambda function.</p>
+    /// <p>Lambda received an unexpected EC2 client exception while setting up for the Lambda function.</p>
     EC2Unexpected(String),
-    /// <p>An error occured when reading from or writing to a connected file system.</p>
+    /// <p>An error occurred when reading from or writing to a connected file system.</p>
     EFSIO(String),
     /// <p>The function couldn't make a network connection to the configured file system.</p>
     EFSMountConnectivity(String),
@@ -4079,7 +4155,7 @@ pub enum InvokeError {
     EFSMountFailure(String),
     /// <p>The function was able to make a network connection to the configured file system, but the mount operation timed out.</p>
     EFSMountTimeout(String),
-    /// <p>AWS Lambda was not able to create an elastic network interface in the VPC, specified as part of Lambda function configuration, because the limit for network interfaces has been reached.</p>
+    /// <p>Lambda was not able to create an elastic network interface in the VPC, specified as part of Lambda function configuration, because the limit for network interfaces has been reached.</p>
     ENILimitReached(String),
     /// <p>One of the parameters in the request is invalid.</p>
     InvalidParameterValue(String),
@@ -4091,7 +4167,7 @@ pub enum InvokeError {
     InvalidSecurityGroupID(String),
     /// <p>The Subnet ID provided in the Lambda function VPC configuration is invalid.</p>
     InvalidSubnetID(String),
-    /// <p>AWS Lambda could not unzip the deployment package.</p>
+    /// <p>Lambda could not unzip the deployment package.</p>
     InvalidZipFile(String),
     /// <p>Lambda was unable to decrypt the environment variables because KMS access was denied. Check the Lambda function's KMS permissions.</p>
     KMSAccessDenied(String),
@@ -4109,9 +4185,9 @@ pub enum InvokeError {
     ResourceNotFound(String),
     /// <p>The function is inactive and its VPC connection is no longer available. Wait for the VPC connection to reestablish and try again.</p>
     ResourceNotReady(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
-    /// <p>AWS Lambda was not able to set up VPC access for the Lambda function because one or more configured subnets has no available IP addresses.</p>
+    /// <p>Lambda was not able to set up VPC access for the Lambda function because one or more configured subnets has no available IP addresses.</p>
     SubnetIPAddressLimitReached(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4249,7 +4325,7 @@ pub enum InvokeAsyncError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
 }
 
@@ -4299,7 +4375,7 @@ pub enum ListAliasesError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4345,7 +4421,7 @@ impl Error for ListAliasesError {}
 pub enum ListCodeSigningConfigsError {
     /// <p>One of the parameters in the request is invalid.</p>
     InvalidParameterValue(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
 }
 
@@ -4385,7 +4461,7 @@ pub enum ListEventSourceMappingsError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4441,7 +4517,7 @@ pub enum ListFunctionEventInvokeConfigsError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4503,7 +4579,7 @@ impl Error for ListFunctionEventInvokeConfigsError {}
 pub enum ListFunctionsError {
     /// <p>One of the parameters in the request is invalid.</p>
     InvalidParameterValue(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4547,7 +4623,7 @@ pub enum ListFunctionsByCodeSigningConfigError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
 }
 
@@ -4601,7 +4677,7 @@ pub enum ListLayerVersionsError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4649,7 +4725,7 @@ impl Error for ListLayerVersionsError {}
 pub enum ListLayersError {
     /// <p>One of the parameters in the request is invalid.</p>
     InvalidParameterValue(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4693,7 +4769,7 @@ pub enum ListProvisionedConcurrencyConfigsError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4757,7 +4833,7 @@ pub enum ListTagsError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4803,7 +4879,7 @@ pub enum ListVersionsByFunctionError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4859,7 +4935,7 @@ pub enum PublishLayerVersionError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4923,7 +4999,7 @@ pub enum PublishVersionError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -4989,7 +5065,7 @@ pub enum PutFunctionCodeSigningConfigError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5069,7 +5145,7 @@ pub enum PutFunctionConcurrencyError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5127,9 +5203,11 @@ impl Error for PutFunctionConcurrencyError {}
 pub enum PutFunctionEventInvokeConfigError {
     /// <p>One of the parameters in the request is invalid.</p>
     InvalidParameterValue(String),
+    /// <p>The resource already exists, or another operation is in progress.</p>
+    ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5144,6 +5222,11 @@ impl PutFunctionEventInvokeConfigError {
                 "InvalidParameterValueException" => {
                     return RusotoError::Service(
                         PutFunctionEventInvokeConfigError::InvalidParameterValue(err.msg),
+                    )
+                }
+                "ResourceConflictException" => {
+                    return RusotoError::Service(
+                        PutFunctionEventInvokeConfigError::ResourceConflict(err.msg),
                     )
                 }
                 "ResourceNotFoundException" => {
@@ -5175,6 +5258,9 @@ impl fmt::Display for PutFunctionEventInvokeConfigError {
             PutFunctionEventInvokeConfigError::InvalidParameterValue(ref cause) => {
                 write!(f, "{}", cause)
             }
+            PutFunctionEventInvokeConfigError::ResourceConflict(ref cause) => {
+                write!(f, "{}", cause)
+            }
             PutFunctionEventInvokeConfigError::ResourceNotFound(ref cause) => {
                 write!(f, "{}", cause)
             }
@@ -5193,7 +5279,7 @@ pub enum PutProvisionedConcurrencyConfigError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5267,7 +5353,7 @@ pub enum RemoveLayerVersionPermissionError {
     PreconditionFailed(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5339,7 +5425,7 @@ pub enum RemovePermissionError {
     PreconditionFailed(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5395,7 +5481,7 @@ pub enum TagResourceError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5449,7 +5535,7 @@ pub enum UntagResourceError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5505,7 +5591,7 @@ pub enum UpdateAliasError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5561,7 +5647,7 @@ pub enum UpdateCodeSigningConfigError {
     InvalidParameterValue(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
 }
 
@@ -5613,7 +5699,7 @@ pub enum UpdateEventSourceMappingError {
     ResourceInUse(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5693,7 +5779,7 @@ pub enum UpdateFunctionCodeError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5787,7 +5873,7 @@ pub enum UpdateFunctionConfigurationError {
     ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5881,9 +5967,11 @@ impl Error for UpdateFunctionConfigurationError {}
 pub enum UpdateFunctionEventInvokeConfigError {
     /// <p>One of the parameters in the request is invalid.</p>
     InvalidParameterValue(String),
+    /// <p>The resource already exists, or another operation is in progress.</p>
+    ResourceConflict(String),
     /// <p>The resource specified in the request does not exist.</p>
     ResourceNotFound(String),
-    /// <p>The AWS Lambda service encountered an internal error.</p>
+    /// <p>The Lambda service encountered an internal error.</p>
     Service(String),
     /// <p>The request throughput limit was exceeded.</p>
     TooManyRequests(String),
@@ -5898,6 +5986,11 @@ impl UpdateFunctionEventInvokeConfigError {
                 "InvalidParameterValueException" => {
                     return RusotoError::Service(
                         UpdateFunctionEventInvokeConfigError::InvalidParameterValue(err.msg),
+                    )
+                }
+                "ResourceConflictException" => {
+                    return RusotoError::Service(
+                        UpdateFunctionEventInvokeConfigError::ResourceConflict(err.msg),
                     )
                 }
                 "ResourceNotFoundException" => {
@@ -5929,6 +6022,9 @@ impl fmt::Display for UpdateFunctionEventInvokeConfigError {
             UpdateFunctionEventInvokeConfigError::InvalidParameterValue(ref cause) => {
                 write!(f, "{}", cause)
             }
+            UpdateFunctionEventInvokeConfigError::ResourceConflict(ref cause) => {
+                write!(f, "{}", cause)
+            }
             UpdateFunctionEventInvokeConfigError::ResourceNotFound(ref cause) => {
                 write!(f, "{}", cause)
             }
@@ -5943,13 +6039,13 @@ impl Error for UpdateFunctionEventInvokeConfigError {}
 /// Trait representing the capabilities of the AWS Lambda API. AWS Lambda clients implement this trait.
 #[async_trait]
 pub trait Lambda {
-    /// <p>Adds permissions to the resource-based policy of a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. Use this action to grant layer usage permission to other accounts. You can grant permission to a single account, all AWS accounts, or all accounts in an organization.</p> <p>To revoke permission, call <a>RemoveLayerVersionPermission</a> with the statement ID that you specified when you added it.</p>
+    /// <p>Adds permissions to the resource-based policy of a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. Use this action to grant layer usage permission to other accounts. You can grant permission to a single account, all accounts in an organization, or all Amazon Web Services accounts. </p> <p>To revoke permission, call <a>RemoveLayerVersionPermission</a> with the statement ID that you specified when you added it.</p>
     async fn add_layer_version_permission(
         &self,
         input: AddLayerVersionPermissionRequest,
     ) -> Result<AddLayerVersionPermissionResponse, RusotoError<AddLayerVersionPermissionError>>;
 
-    /// <p>Grants an AWS service or another account permission to use a function. You can apply the policy at the function level, or specify a qualifier to restrict access to a single version or alias. If you use a qualifier, the invoker must use the full Amazon Resource Name (ARN) of that version or alias to invoke the function.</p> <p>To grant permission to another account, specify the account ID as the <code>Principal</code>. For AWS services, the principal is a domain-style identifier defined by the service, like <code>s3.amazonaws.com</code> or <code>sns.amazonaws.com</code>. For AWS services, you can also specify the ARN of the associated resource as the <code>SourceArn</code>. If you grant permission to a service principal without specifying the source, other accounts could potentially configure resources in their account to invoke your Lambda function.</p> <p>This action adds a statement to a resource-based permissions policy for the function. For more information about function policies, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html">Lambda Function Policies</a>. </p>
+    /// <p>Grants an Amazon Web Services service or another account permission to use a function. You can apply the policy at the function level, or specify a qualifier to restrict access to a single version or alias. If you use a qualifier, the invoker must use the full Amazon Resource Name (ARN) of that version or alias to invoke the function. Note: Lambda does not support adding policies to version $LATEST.</p> <p>To grant permission to another account, specify the account ID as the <code>Principal</code>. For Amazon Web Services services, the principal is a domain-style identifier defined by the service, like <code>s3.amazonaws.com</code> or <code>sns.amazonaws.com</code>. For Amazon Web Services services, you can also specify the ARN of the associated resource as the <code>SourceArn</code>. If you grant permission to a service principal without specifying the source, other accounts could potentially configure resources in their account to invoke your Lambda function.</p> <p>This action adds a statement to a resource-based permissions policy for the function. For more information about function policies, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html">Lambda Function Policies</a>. </p>
     async fn add_permission(
         &self,
         input: AddPermissionRequest,
@@ -5967,13 +6063,13 @@ pub trait Lambda {
         input: CreateCodeSigningConfigRequest,
     ) -> Result<CreateCodeSigningConfigResponse, RusotoError<CreateCodeSigningConfigError>>;
 
-    /// <p><p>Creates a mapping between an event source and an AWS Lambda function. Lambda reads items from the event source and triggers the function.</p> <p>For details about each event source type, see the following topics.</p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html">Using AWS Lambda with Amazon DynamoDB</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html">Using AWS Lambda with Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html">Using AWS Lambda with Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html">Using AWS Lambda with Amazon MQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html">Using AWS Lambda with Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/kafka-smaa.html">Using AWS Lambda with Self-Managed Apache Kafka</a> </p> </li> </ul> <p>The following error handling options are only available for stream sources (DynamoDB and Kinesis):</p> <ul> <li> <p> <code>BisectBatchOnFunctionError</code> - If the function returns an error, split the batch in two and retry.</p> </li> <li> <p> <code>DestinationConfig</code> - Send discarded records to an Amazon SQS queue or Amazon SNS topic.</p> </li> <li> <p> <code>MaximumRecordAgeInSeconds</code> - Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires</p> </li> <li> <p> <code>MaximumRetryAttempts</code> - Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p> </li> <li> <p> <code>ParallelizationFactor</code> - Process multiple batches from each shard concurrently.</p> </li> </ul></p>
+    /// <p><p>Creates a mapping between an event source and an Lambda function. Lambda reads items from the event source and triggers the function.</p> <p>For details about how to configure different event sources, see the following topics. </p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html#services-dynamodb-eventsourcemapping"> Amazon DynamoDB Streams</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#services-kinesis-eventsourcemapping"> Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-eventsource"> Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html#services-mq-eventsourcemapping"> Amazon MQ and RabbitMQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html"> Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/kafka-smaa.html"> Apache Kafka</a> </p> </li> </ul> <p>The following error handling options are only available for stream sources (DynamoDB and Kinesis):</p> <ul> <li> <p> <code>BisectBatchOnFunctionError</code> - If the function returns an error, split the batch in two and retry.</p> </li> <li> <p> <code>DestinationConfig</code> - Send discarded records to an Amazon SQS queue or Amazon SNS topic.</p> </li> <li> <p> <code>MaximumRecordAgeInSeconds</code> - Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires</p> </li> <li> <p> <code>MaximumRetryAttempts</code> - Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p> </li> <li> <p> <code>ParallelizationFactor</code> - Process multiple batches from each shard concurrently.</p> </li> </ul> <p>For information about which configuration parameters apply to each event source, see the following topics.</p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html#services-ddb-params"> Amazon DynamoDB Streams</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#services-kinesis-params"> Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-params"> Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html#services-mq-params"> Amazon MQ and RabbitMQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html#services-msk-parms"> Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kafka.html#services-kafka-parms"> Apache Kafka</a> </p> </li> </ul></p>
     async fn create_event_source_mapping(
         &self,
         input: CreateEventSourceMappingRequest,
     ) -> Result<EventSourceMappingConfiguration, RusotoError<CreateEventSourceMappingError>>;
 
-    /// <p>Creates a Lambda function. To create a function, you need a <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html">deployment package</a> and an <a href="https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role">execution role</a>. The deployment package is a .zip file archive or container image that contains your function code. The execution role grants the function permission to use AWS services, such as Amazon CloudWatch Logs for log streaming and AWS X-Ray for request tracing.</p> <p>When you create a function, Lambda provisions an instance of the function and its supporting resources. If your function connects to a VPC, this process can take a minute or so. During this time, you can't invoke or modify the function. The <code>State</code>, <code>StateReason</code>, and <code>StateReasonCode</code> fields in the response from <a>GetFunctionConfiguration</a> indicate when the function is ready to invoke. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html">Function States</a>.</p> <p>A function has an unpublished version, and can have published versions and aliases. The unpublished version changes when you update your function's code and configuration. A published version is a snapshot of your function code and configuration that can't be changed. An alias is a named resource that maps to a version, and can be changed to map to a different version. Use the <code>Publish</code> parameter to create version <code>1</code> of your function from its initial configuration.</p> <p>The other parameters let you configure version-specific and function-level settings. You can modify version-specific settings later with <a>UpdateFunctionConfiguration</a>. Function-level settings apply to both the unpublished and published versions of the function, and include tags (<a>TagResource</a>) and per-function concurrency limits (<a>PutFunctionConcurrency</a>).</p> <p>You can use code signing if your deployment package is a .zip file archive. To enable code signing for this function, specify the ARN of a code-signing configuration. When a user attempts to deploy a code package with <a>UpdateFunctionCode</a>, Lambda checks that the code package has a valid signature from a trusted publisher. The code-signing configuration includes set set of signing profiles, which define the trusted publishers for this function.</p> <p>If another account or an AWS service invokes your function, use <a>AddPermission</a> to grant permission by creating a resource-based IAM policy. You can grant permissions at the function level, on a version, or on an alias.</p> <p>To invoke your function directly, use <a>Invoke</a>. To invoke your function in response to events in other AWS services, create an event source mapping (<a>CreateEventSourceMapping</a>), or configure a function trigger in the other service. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-invocation.html">Invoking Functions</a>.</p>
+    /// <p>Creates a Lambda function. To create a function, you need a <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html">deployment package</a> and an <a href="https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role">execution role</a>. The deployment package is a .zip file archive or container image that contains your function code. The execution role grants the function permission to use Amazon Web Services services, such as Amazon CloudWatch Logs for log streaming and X-Ray for request tracing.</p> <p>You set the package type to <code>Image</code> if the deployment package is a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html">container image</a>. For a container image, the code property must include the URI of a container image in the Amazon ECR registry. You do not need to specify the handler and runtime properties. </p> <p>You set the package type to <code>Zip</code> if the deployment package is a <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html#gettingstarted-package-zip">.zip file archive</a>. For a .zip file archive, the code property specifies the location of the .zip file. You must also specify the handler and runtime properties. The code in the deployment package must be compatible with the target instruction set architecture of the function (<code>x86-64</code> or <code>arm64</code>). If you do not specify the architecture, the default value is <code>x86-64</code>.</p> <p>When you create a function, Lambda provisions an instance of the function and its supporting resources. If your function connects to a VPC, this process can take a minute or so. During this time, you can't invoke or modify the function. The <code>State</code>, <code>StateReason</code>, and <code>StateReasonCode</code> fields in the response from <a>GetFunctionConfiguration</a> indicate when the function is ready to invoke. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html">Function States</a>.</p> <p>A function has an unpublished version, and can have published versions and aliases. The unpublished version changes when you update your function's code and configuration. A published version is a snapshot of your function code and configuration that can't be changed. An alias is a named resource that maps to a version, and can be changed to map to a different version. Use the <code>Publish</code> parameter to create version <code>1</code> of your function from its initial configuration.</p> <p>The other parameters let you configure version-specific and function-level settings. You can modify version-specific settings later with <a>UpdateFunctionConfiguration</a>. Function-level settings apply to both the unpublished and published versions of the function, and include tags (<a>TagResource</a>) and per-function concurrency limits (<a>PutFunctionConcurrency</a>).</p> <p>You can use code signing if your deployment package is a .zip file archive. To enable code signing for this function, specify the ARN of a code-signing configuration. When a user attempts to deploy a code package with <a>UpdateFunctionCode</a>, Lambda checks that the code package has a valid signature from a trusted publisher. The code-signing configuration includes set set of signing profiles, which define the trusted publishers for this function.</p> <p>If another account or an Amazon Web Services service invokes your function, use <a>AddPermission</a> to grant permission by creating a resource-based IAM policy. You can grant permissions at the function level, on a version, or on an alias.</p> <p>To invoke your function directly, use <a>Invoke</a>. To invoke your function in response to events in other Amazon Web Services services, create an event source mapping (<a>CreateEventSourceMapping</a>), or configure a function trigger in the other service. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-invocation.html">Invoking Functions</a>.</p>
     async fn create_function(
         &self,
         input: CreateFunctionRequest,
@@ -5997,7 +6093,7 @@ pub trait Lambda {
         input: DeleteEventSourceMappingRequest,
     ) -> Result<EventSourceMappingConfiguration, RusotoError<DeleteEventSourceMappingError>>;
 
-    /// <p>Deletes a Lambda function. To delete a specific function version, use the <code>Qualifier</code> parameter. Otherwise, all versions and aliases are deleted.</p> <p>To delete Lambda event source mappings that invoke a function, use <a>DeleteEventSourceMapping</a>. For AWS services and resources that invoke your function directly, delete the trigger in the service where you originally configured it.</p>
+    /// <p>Deletes a Lambda function. To delete a specific function version, use the <code>Qualifier</code> parameter. Otherwise, all versions and aliases are deleted.</p> <p>To delete Lambda event source mappings that invoke a function, use <a>DeleteEventSourceMapping</a>. For Amazon Web Services services and resources that invoke your function directly, delete the trigger in the service where you originally configured it.</p>
     async fn delete_function(
         &self,
         input: DeleteFunctionRequest,
@@ -6021,7 +6117,7 @@ pub trait Lambda {
         input: DeleteFunctionEventInvokeConfigRequest,
     ) -> Result<(), RusotoError<DeleteFunctionEventInvokeConfigError>>;
 
-    /// <p>Deletes a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. Deleted versions can no longer be viewed or added to functions. To avoid breaking functions, a copy of the version remains in Lambda until no functions refer to it.</p>
+    /// <p>Deletes a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. Deleted versions can no longer be viewed or added to functions. To avoid breaking functions, a copy of the version remains in Lambda until no functions refer to it.</p>
     async fn delete_layer_version(
         &self,
         input: DeleteLayerVersionRequest,
@@ -6033,7 +6129,7 @@ pub trait Lambda {
         input: DeleteProvisionedConcurrencyConfigRequest,
     ) -> Result<(), RusotoError<DeleteProvisionedConcurrencyConfigError>>;
 
-    /// <p>Retrieves details about your account's <a href="https://docs.aws.amazon.com/lambda/latest/dg/limits.html">limits</a> and usage in an AWS Region.</p>
+    /// <p>Retrieves details about your account's <a href="https://docs.aws.amazon.com/lambda/latest/dg/limits.html">limits</a> and usage in an Amazon Web Services Region.</p>
     async fn get_account_settings(
         &self,
     ) -> Result<GetAccountSettingsResponse, RusotoError<GetAccountSettingsError>>;
@@ -6086,19 +6182,19 @@ pub trait Lambda {
         input: GetFunctionEventInvokeConfigRequest,
     ) -> Result<FunctionEventInvokeConfig, RusotoError<GetFunctionEventInvokeConfigError>>;
 
-    /// <p>Returns information about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>, with a link to download the layer archive that's valid for 10 minutes.</p>
+    /// <p>Returns information about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>, with a link to download the layer archive that's valid for 10 minutes.</p>
     async fn get_layer_version(
         &self,
         input: GetLayerVersionRequest,
     ) -> Result<GetLayerVersionResponse, RusotoError<GetLayerVersionError>>;
 
-    /// <p>Returns information about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>, with a link to download the layer archive that's valid for 10 minutes.</p>
+    /// <p>Returns information about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>, with a link to download the layer archive that's valid for 10 minutes.</p>
     async fn get_layer_version_by_arn(
         &self,
         input: GetLayerVersionByArnRequest,
     ) -> Result<GetLayerVersionResponse, RusotoError<GetLayerVersionByArnError>>;
 
-    /// <p>Returns the permission policy for a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. For more information, see <a>AddLayerVersionPermission</a>.</p>
+    /// <p>Returns the permission policy for a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. For more information, see <a>AddLayerVersionPermission</a>.</p>
     async fn get_layer_version_policy(
         &self,
         input: GetLayerVersionPolicyRequest,
@@ -6173,13 +6269,13 @@ pub trait Lambda {
         RusotoError<ListFunctionsByCodeSigningConfigError>,
     >;
 
-    /// <p>Lists the versions of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. Versions that have been deleted aren't listed. Specify a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime identifier</a> to list only versions that indicate that they're compatible with that runtime.</p>
+    /// <p>Lists the versions of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. Versions that have been deleted aren't listed. Specify a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime identifier</a> to list only versions that indicate that they're compatible with that runtime. Specify a compatible architecture to include only layer versions that are compatible with that architecture.</p>
     async fn list_layer_versions(
         &self,
         input: ListLayerVersionsRequest,
     ) -> Result<ListLayerVersionsResponse, RusotoError<ListLayerVersionsError>>;
 
-    /// <p>Lists <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layers</a> and shows information about the latest version of each. Specify a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime identifier</a> to list only layers that indicate that they're compatible with that runtime.</p>
+    /// <p>Lists <a href="https://docs.aws.amazon.com/lambda/latest/dg/invocation-layers.html">Lambda layers</a> and shows information about the latest version of each. Specify a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime identifier</a> to list only layers that indicate that they're compatible with that runtime. Specify a compatible architecture to include only layers that are compatible with that <a href="https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html">instruction set architecture</a>.</p>
     async fn list_layers(
         &self,
         input: ListLayersRequest,
@@ -6206,13 +6302,13 @@ pub trait Lambda {
         input: ListVersionsByFunctionRequest,
     ) -> Result<ListVersionsByFunctionResponse, RusotoError<ListVersionsByFunctionError>>;
 
-    /// <p>Creates an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a> from a ZIP archive. Each time you call <code>PublishLayerVersion</code> with the same layer name, a new version is created.</p> <p>Add layers to your function with <a>CreateFunction</a> or <a>UpdateFunctionConfiguration</a>.</p>
+    /// <p>Creates an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a> from a ZIP archive. Each time you call <code>PublishLayerVersion</code> with the same layer name, a new version is created.</p> <p>Add layers to your function with <a>CreateFunction</a> or <a>UpdateFunctionConfiguration</a>.</p>
     async fn publish_layer_version(
         &self,
         input: PublishLayerVersionRequest,
     ) -> Result<PublishLayerVersionResponse, RusotoError<PublishLayerVersionError>>;
 
-    /// <p>Creates a <a href="https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html">version</a> from the current code and configuration of a function. Use versions to create a snapshot of your function code and configuration that doesn't change.</p> <p>AWS Lambda doesn't publish a version if the function's configuration and code haven't changed since the last version. Use <a>UpdateFunctionCode</a> or <a>UpdateFunctionConfiguration</a> to update the function before publishing a version.</p> <p>Clients can invoke versions directly or with an alias. To create an alias, use <a>CreateAlias</a>.</p>
+    /// <p>Creates a <a href="https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html">version</a> from the current code and configuration of a function. Use versions to create a snapshot of your function code and configuration that doesn't change.</p> <p>Lambda doesn't publish a version if the function's configuration and code haven't changed since the last version. Use <a>UpdateFunctionCode</a> or <a>UpdateFunctionConfiguration</a> to update the function before publishing a version.</p> <p>Clients can invoke versions directly or with an alias. To create an alias, use <a>CreateAlias</a>.</p>
     async fn publish_version(
         &self,
         input: PublishVersionRequest,
@@ -6245,13 +6341,13 @@ pub trait Lambda {
         RusotoError<PutProvisionedConcurrencyConfigError>,
     >;
 
-    /// <p>Removes a statement from the permissions policy for a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. For more information, see <a>AddLayerVersionPermission</a>.</p>
+    /// <p>Removes a statement from the permissions policy for a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. For more information, see <a>AddLayerVersionPermission</a>.</p>
     async fn remove_layer_version_permission(
         &self,
         input: RemoveLayerVersionPermissionRequest,
     ) -> Result<(), RusotoError<RemoveLayerVersionPermissionError>>;
 
-    /// <p>Revokes function-use permission from an AWS service or another account. You can get the ID of the statement from the output of <a>GetPolicy</a>.</p>
+    /// <p>Revokes function-use permission from an Amazon Web Services service or another account. You can get the ID of the statement from the output of <a>GetPolicy</a>.</p>
     async fn remove_permission(
         &self,
         input: RemovePermissionRequest,
@@ -6281,7 +6377,7 @@ pub trait Lambda {
         input: UpdateCodeSigningConfigRequest,
     ) -> Result<UpdateCodeSigningConfigResponse, RusotoError<UpdateCodeSigningConfigError>>;
 
-    /// <p><p>Updates an event source mapping. You can change the function that AWS Lambda invokes, or pause invocation and resume later from the same location.</p> <p>The following error handling options are only available for stream sources (DynamoDB and Kinesis):</p> <ul> <li> <p> <code>BisectBatchOnFunctionError</code> - If the function returns an error, split the batch in two and retry.</p> </li> <li> <p> <code>DestinationConfig</code> - Send discarded records to an Amazon SQS queue or Amazon SNS topic.</p> </li> <li> <p> <code>MaximumRecordAgeInSeconds</code> - Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires</p> </li> <li> <p> <code>MaximumRetryAttempts</code> - Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p> </li> <li> <p> <code>ParallelizationFactor</code> - Process multiple batches from each shard concurrently.</p> </li> </ul></p>
+    /// <p><p>Updates an event source mapping. You can change the function that Lambda invokes, or pause invocation and resume later from the same location.</p> <p>For details about how to configure different event sources, see the following topics. </p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html#services-dynamodb-eventsourcemapping"> Amazon DynamoDB Streams</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#services-kinesis-eventsourcemapping"> Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-eventsource"> Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html#services-mq-eventsourcemapping"> Amazon MQ and RabbitMQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html"> Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/kafka-smaa.html"> Apache Kafka</a> </p> </li> </ul> <p>The following error handling options are only available for stream sources (DynamoDB and Kinesis):</p> <ul> <li> <p> <code>BisectBatchOnFunctionError</code> - If the function returns an error, split the batch in two and retry.</p> </li> <li> <p> <code>DestinationConfig</code> - Send discarded records to an Amazon SQS queue or Amazon SNS topic.</p> </li> <li> <p> <code>MaximumRecordAgeInSeconds</code> - Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires</p> </li> <li> <p> <code>MaximumRetryAttempts</code> - Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p> </li> <li> <p> <code>ParallelizationFactor</code> - Process multiple batches from each shard concurrently.</p> </li> </ul> <p>For information about which configuration parameters apply to each event source, see the following topics.</p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html#services-ddb-params"> Amazon DynamoDB Streams</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#services-kinesis-params"> Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-params"> Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html#services-mq-params"> Amazon MQ and RabbitMQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html#services-msk-parms"> Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kafka.html#services-kafka-parms"> Apache Kafka</a> </p> </li> </ul></p>
     async fn update_event_source_mapping(
         &self,
         input: UpdateEventSourceMappingRequest,
@@ -6293,7 +6389,7 @@ pub trait Lambda {
         input: UpdateFunctionCodeRequest,
     ) -> Result<FunctionConfiguration, RusotoError<UpdateFunctionCodeError>>;
 
-    /// <p>Modify the version-specific settings of a Lambda function.</p> <p>When you update a function, Lambda provisions an instance of the function and its supporting resources. If your function connects to a VPC, this process can take a minute. During this time, you can't modify the function, but you can still invoke it. The <code>LastUpdateStatus</code>, <code>LastUpdateStatusReason</code>, and <code>LastUpdateStatusReasonCode</code> fields in the response from <a>GetFunctionConfiguration</a> indicate when the update is complete and the function is processing events with the new configuration. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html">Function States</a>.</p> <p>These settings can vary between versions of a function and are locked when you publish a version. You can't modify the configuration of a published version, only the unpublished version.</p> <p>To configure function concurrency, use <a>PutFunctionConcurrency</a>. To grant invoke permissions to an account or AWS service, use <a>AddPermission</a>.</p>
+    /// <p>Modify the version-specific settings of a Lambda function.</p> <p>When you update a function, Lambda provisions an instance of the function and its supporting resources. If your function connects to a VPC, this process can take a minute. During this time, you can't modify the function, but you can still invoke it. The <code>LastUpdateStatus</code>, <code>LastUpdateStatusReason</code>, and <code>LastUpdateStatusReasonCode</code> fields in the response from <a>GetFunctionConfiguration</a> indicate when the update is complete and the function is processing events with the new configuration. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html">Function States</a>.</p> <p>These settings can vary between versions of a function and are locked when you publish a version. You can't modify the configuration of a published version, only the unpublished version.</p> <p>To configure function concurrency, use <a>PutFunctionConcurrency</a>. To grant invoke permissions to an account or Amazon Web Services service, use <a>AddPermission</a>.</p>
     async fn update_function_configuration(
         &self,
         input: UpdateFunctionConfigurationRequest,
@@ -6345,7 +6441,7 @@ impl LambdaClient {
 
 #[async_trait]
 impl Lambda for LambdaClient {
-    /// <p>Adds permissions to the resource-based policy of a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. Use this action to grant layer usage permission to other accounts. You can grant permission to a single account, all AWS accounts, or all accounts in an organization.</p> <p>To revoke permission, call <a>RemoveLayerVersionPermission</a> with the statement ID that you specified when you added it.</p>
+    /// <p>Adds permissions to the resource-based policy of a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. Use this action to grant layer usage permission to other accounts. You can grant permission to a single account, all accounts in an organization, or all Amazon Web Services accounts. </p> <p>To revoke permission, call <a>RemoveLayerVersionPermission</a> with the statement ID that you specified when you added it.</p>
     #[allow(unused_mut)]
     async fn add_layer_version_permission(
         &self,
@@ -6387,7 +6483,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Grants an AWS service or another account permission to use a function. You can apply the policy at the function level, or specify a qualifier to restrict access to a single version or alias. If you use a qualifier, the invoker must use the full Amazon Resource Name (ARN) of that version or alias to invoke the function.</p> <p>To grant permission to another account, specify the account ID as the <code>Principal</code>. For AWS services, the principal is a domain-style identifier defined by the service, like <code>s3.amazonaws.com</code> or <code>sns.amazonaws.com</code>. For AWS services, you can also specify the ARN of the associated resource as the <code>SourceArn</code>. If you grant permission to a service principal without specifying the source, other accounts could potentially configure resources in their account to invoke your Lambda function.</p> <p>This action adds a statement to a resource-based permissions policy for the function. For more information about function policies, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html">Lambda Function Policies</a>. </p>
+    /// <p>Grants an Amazon Web Services service or another account permission to use a function. You can apply the policy at the function level, or specify a qualifier to restrict access to a single version or alias. If you use a qualifier, the invoker must use the full Amazon Resource Name (ARN) of that version or alias to invoke the function. Note: Lambda does not support adding policies to version $LATEST.</p> <p>To grant permission to another account, specify the account ID as the <code>Principal</code>. For Amazon Web Services services, the principal is a domain-style identifier defined by the service, like <code>s3.amazonaws.com</code> or <code>sns.amazonaws.com</code>. For Amazon Web Services services, you can also specify the ARN of the associated resource as the <code>SourceArn</code>. If you grant permission to a service principal without specifying the source, other accounts could potentially configure resources in their account to invoke your Lambda function.</p> <p>This action adds a statement to a resource-based permissions policy for the function. For more information about function policies, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html">Lambda Function Policies</a>. </p>
     #[allow(unused_mut)]
     async fn add_permission(
         &self,
@@ -6492,7 +6588,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p><p>Creates a mapping between an event source and an AWS Lambda function. Lambda reads items from the event source and triggers the function.</p> <p>For details about each event source type, see the following topics.</p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html">Using AWS Lambda with Amazon DynamoDB</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html">Using AWS Lambda with Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html">Using AWS Lambda with Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html">Using AWS Lambda with Amazon MQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html">Using AWS Lambda with Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/kafka-smaa.html">Using AWS Lambda with Self-Managed Apache Kafka</a> </p> </li> </ul> <p>The following error handling options are only available for stream sources (DynamoDB and Kinesis):</p> <ul> <li> <p> <code>BisectBatchOnFunctionError</code> - If the function returns an error, split the batch in two and retry.</p> </li> <li> <p> <code>DestinationConfig</code> - Send discarded records to an Amazon SQS queue or Amazon SNS topic.</p> </li> <li> <p> <code>MaximumRecordAgeInSeconds</code> - Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires</p> </li> <li> <p> <code>MaximumRetryAttempts</code> - Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p> </li> <li> <p> <code>ParallelizationFactor</code> - Process multiple batches from each shard concurrently.</p> </li> </ul></p>
+    /// <p><p>Creates a mapping between an event source and an Lambda function. Lambda reads items from the event source and triggers the function.</p> <p>For details about how to configure different event sources, see the following topics. </p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html#services-dynamodb-eventsourcemapping"> Amazon DynamoDB Streams</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#services-kinesis-eventsourcemapping"> Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-eventsource"> Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html#services-mq-eventsourcemapping"> Amazon MQ and RabbitMQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html"> Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/kafka-smaa.html"> Apache Kafka</a> </p> </li> </ul> <p>The following error handling options are only available for stream sources (DynamoDB and Kinesis):</p> <ul> <li> <p> <code>BisectBatchOnFunctionError</code> - If the function returns an error, split the batch in two and retry.</p> </li> <li> <p> <code>DestinationConfig</code> - Send discarded records to an Amazon SQS queue or Amazon SNS topic.</p> </li> <li> <p> <code>MaximumRecordAgeInSeconds</code> - Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires</p> </li> <li> <p> <code>MaximumRetryAttempts</code> - Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p> </li> <li> <p> <code>ParallelizationFactor</code> - Process multiple batches from each shard concurrently.</p> </li> </ul> <p>For information about which configuration parameters apply to each event source, see the following topics.</p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html#services-ddb-params"> Amazon DynamoDB Streams</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#services-kinesis-params"> Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-params"> Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html#services-mq-params"> Amazon MQ and RabbitMQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html#services-msk-parms"> Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kafka.html#services-kafka-parms"> Apache Kafka</a> </p> </li> </ul></p>
     #[allow(unused_mut)]
     async fn create_event_source_mapping(
         &self,
@@ -6523,7 +6619,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Creates a Lambda function. To create a function, you need a <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html">deployment package</a> and an <a href="https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role">execution role</a>. The deployment package is a .zip file archive or container image that contains your function code. The execution role grants the function permission to use AWS services, such as Amazon CloudWatch Logs for log streaming and AWS X-Ray for request tracing.</p> <p>When you create a function, Lambda provisions an instance of the function and its supporting resources. If your function connects to a VPC, this process can take a minute or so. During this time, you can't invoke or modify the function. The <code>State</code>, <code>StateReason</code>, and <code>StateReasonCode</code> fields in the response from <a>GetFunctionConfiguration</a> indicate when the function is ready to invoke. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html">Function States</a>.</p> <p>A function has an unpublished version, and can have published versions and aliases. The unpublished version changes when you update your function's code and configuration. A published version is a snapshot of your function code and configuration that can't be changed. An alias is a named resource that maps to a version, and can be changed to map to a different version. Use the <code>Publish</code> parameter to create version <code>1</code> of your function from its initial configuration.</p> <p>The other parameters let you configure version-specific and function-level settings. You can modify version-specific settings later with <a>UpdateFunctionConfiguration</a>. Function-level settings apply to both the unpublished and published versions of the function, and include tags (<a>TagResource</a>) and per-function concurrency limits (<a>PutFunctionConcurrency</a>).</p> <p>You can use code signing if your deployment package is a .zip file archive. To enable code signing for this function, specify the ARN of a code-signing configuration. When a user attempts to deploy a code package with <a>UpdateFunctionCode</a>, Lambda checks that the code package has a valid signature from a trusted publisher. The code-signing configuration includes set set of signing profiles, which define the trusted publishers for this function.</p> <p>If another account or an AWS service invokes your function, use <a>AddPermission</a> to grant permission by creating a resource-based IAM policy. You can grant permissions at the function level, on a version, or on an alias.</p> <p>To invoke your function directly, use <a>Invoke</a>. To invoke your function in response to events in other AWS services, create an event source mapping (<a>CreateEventSourceMapping</a>), or configure a function trigger in the other service. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-invocation.html">Invoking Functions</a>.</p>
+    /// <p>Creates a Lambda function. To create a function, you need a <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html">deployment package</a> and an <a href="https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role">execution role</a>. The deployment package is a .zip file archive or container image that contains your function code. The execution role grants the function permission to use Amazon Web Services services, such as Amazon CloudWatch Logs for log streaming and X-Ray for request tracing.</p> <p>You set the package type to <code>Image</code> if the deployment package is a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html">container image</a>. For a container image, the code property must include the URI of a container image in the Amazon ECR registry. You do not need to specify the handler and runtime properties. </p> <p>You set the package type to <code>Zip</code> if the deployment package is a <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html#gettingstarted-package-zip">.zip file archive</a>. For a .zip file archive, the code property specifies the location of the .zip file. You must also specify the handler and runtime properties. The code in the deployment package must be compatible with the target instruction set architecture of the function (<code>x86-64</code> or <code>arm64</code>). If you do not specify the architecture, the default value is <code>x86-64</code>.</p> <p>When you create a function, Lambda provisions an instance of the function and its supporting resources. If your function connects to a VPC, this process can take a minute or so. During this time, you can't invoke or modify the function. The <code>State</code>, <code>StateReason</code>, and <code>StateReasonCode</code> fields in the response from <a>GetFunctionConfiguration</a> indicate when the function is ready to invoke. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html">Function States</a>.</p> <p>A function has an unpublished version, and can have published versions and aliases. The unpublished version changes when you update your function's code and configuration. A published version is a snapshot of your function code and configuration that can't be changed. An alias is a named resource that maps to a version, and can be changed to map to a different version. Use the <code>Publish</code> parameter to create version <code>1</code> of your function from its initial configuration.</p> <p>The other parameters let you configure version-specific and function-level settings. You can modify version-specific settings later with <a>UpdateFunctionConfiguration</a>. Function-level settings apply to both the unpublished and published versions of the function, and include tags (<a>TagResource</a>) and per-function concurrency limits (<a>PutFunctionConcurrency</a>).</p> <p>You can use code signing if your deployment package is a .zip file archive. To enable code signing for this function, specify the ARN of a code-signing configuration. When a user attempts to deploy a code package with <a>UpdateFunctionCode</a>, Lambda checks that the code package has a valid signature from a trusted publisher. The code-signing configuration includes set set of signing profiles, which define the trusted publishers for this function.</p> <p>If another account or an Amazon Web Services service invokes your function, use <a>AddPermission</a> to grant permission by creating a resource-based IAM policy. You can grant permissions at the function level, on a version, or on an alias.</p> <p>To invoke your function directly, use <a>Invoke</a>. To invoke your function in response to events in other Amazon Web Services services, create an event source mapping (<a>CreateEventSourceMapping</a>), or configure a function trigger in the other service. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-invocation.html">Invoking Functions</a>.</p>
     #[allow(unused_mut)]
     async fn create_function(
         &self,
@@ -6647,7 +6743,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Deletes a Lambda function. To delete a specific function version, use the <code>Qualifier</code> parameter. Otherwise, all versions and aliases are deleted.</p> <p>To delete Lambda event source mappings that invoke a function, use <a>DeleteEventSourceMapping</a>. For AWS services and resources that invoke your function directly, delete the trigger in the service where you originally configured it.</p>
+    /// <p>Deletes a Lambda function. To delete a specific function version, use the <code>Qualifier</code> parameter. Otherwise, all versions and aliases are deleted.</p> <p>To delete Lambda event source mappings that invoke a function, use <a>DeleteEventSourceMapping</a>. For Amazon Web Services services and resources that invoke your function directly, delete the trigger in the service where you originally configured it.</p>
     #[allow(unused_mut)]
     async fn delete_function(
         &self,
@@ -6783,7 +6879,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Deletes a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. Deleted versions can no longer be viewed or added to functions. To avoid breaking functions, a copy of the version remains in Lambda until no functions refer to it.</p>
+    /// <p>Deletes a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. Deleted versions can no longer be viewed or added to functions. To avoid breaking functions, a copy of the version remains in Lambda until no functions refer to it.</p>
     #[allow(unused_mut)]
     async fn delete_layer_version(
         &self,
@@ -6850,7 +6946,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Retrieves details about your account's <a href="https://docs.aws.amazon.com/lambda/latest/dg/limits.html">limits</a> and usage in an AWS Region.</p>
+    /// <p>Retrieves details about your account's <a href="https://docs.aws.amazon.com/lambda/latest/dg/limits.html">limits</a> and usage in an Amazon Web Services Region.</p>
     #[allow(unused_mut)]
     async fn get_account_settings(
         &self,
@@ -7145,7 +7241,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Returns information about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>, with a link to download the layer archive that's valid for 10 minutes.</p>
+    /// <p>Returns information about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>, with a link to download the layer archive that's valid for 10 minutes.</p>
     #[allow(unused_mut)]
     async fn get_layer_version(
         &self,
@@ -7177,7 +7273,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Returns information about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>, with a link to download the layer archive that's valid for 10 minutes.</p>
+    /// <p>Returns information about a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>, with a link to download the layer archive that's valid for 10 minutes.</p>
     #[allow(unused_mut)]
     async fn get_layer_version_by_arn(
         &self,
@@ -7210,7 +7306,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Returns the permission policy for a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. For more information, see <a>AddLayerVersionPermission</a>.</p>
+    /// <p>Returns the permission policy for a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. For more information, see <a>AddLayerVersionPermission</a>.</p>
     #[allow(unused_mut)]
     async fn get_layer_version_policy(
         &self,
@@ -7659,7 +7755,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Lists the versions of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. Versions that have been deleted aren't listed. Specify a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime identifier</a> to list only versions that indicate that they're compatible with that runtime.</p>
+    /// <p>Lists the versions of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. Versions that have been deleted aren't listed. Specify a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime identifier</a> to list only versions that indicate that they're compatible with that runtime. Specify a compatible architecture to include only layer versions that are compatible with that architecture.</p>
     #[allow(unused_mut)]
     async fn list_layer_versions(
         &self,
@@ -7674,6 +7770,9 @@ impl Lambda for LambdaClient {
         request.set_content_type("application/x-amz-json-1.1".to_owned());
 
         let mut params = Params::new();
+        if let Some(ref x) = input.compatible_architecture {
+            params.put("CompatibleArchitecture", x);
+        }
         if let Some(ref x) = input.compatible_runtime {
             params.put("CompatibleRuntime", x);
         }
@@ -7702,7 +7801,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Lists <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layers</a> and shows information about the latest version of each. Specify a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime identifier</a> to list only layers that indicate that they're compatible with that runtime.</p>
+    /// <p>Lists <a href="https://docs.aws.amazon.com/lambda/latest/dg/invocation-layers.html">Lambda layers</a> and shows information about the latest version of each. Specify a <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html">runtime identifier</a> to list only layers that indicate that they're compatible with that runtime. Specify a compatible architecture to include only layers that are compatible with that <a href="https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html">instruction set architecture</a>.</p>
     #[allow(unused_mut)]
     async fn list_layers(
         &self,
@@ -7714,6 +7813,9 @@ impl Lambda for LambdaClient {
         request.set_content_type("application/x-amz-json-1.1".to_owned());
 
         let mut params = Params::new();
+        if let Some(ref x) = input.compatible_architecture {
+            params.put("CompatibleArchitecture", x);
+        }
         if let Some(ref x) = input.compatible_runtime {
             params.put("CompatibleRuntime", x);
         }
@@ -7856,7 +7958,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Creates an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a> from a ZIP archive. Each time you call <code>PublishLayerVersion</code> with the same layer name, a new version is created.</p> <p>Add layers to your function with <a>CreateFunction</a> or <a>UpdateFunctionConfiguration</a>.</p>
+    /// <p>Creates an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a> from a ZIP archive. Each time you call <code>PublishLayerVersion</code> with the same layer name, a new version is created.</p> <p>Add layers to your function with <a>CreateFunction</a> or <a>UpdateFunctionConfiguration</a>.</p>
     #[allow(unused_mut)]
     async fn publish_layer_version(
         &self,
@@ -7890,7 +7992,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Creates a <a href="https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html">version</a> from the current code and configuration of a function. Use versions to create a snapshot of your function code and configuration that doesn't change.</p> <p>AWS Lambda doesn't publish a version if the function's configuration and code haven't changed since the last version. Use <a>UpdateFunctionCode</a> or <a>UpdateFunctionConfiguration</a> to update the function before publishing a version.</p> <p>Clients can invoke versions directly or with an alias. To create an alias, use <a>CreateAlias</a>.</p>
+    /// <p>Creates a <a href="https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html">version</a> from the current code and configuration of a function. Use versions to create a snapshot of your function code and configuration that doesn't change.</p> <p>Lambda doesn't publish a version if the function's configuration and code haven't changed since the last version. Use <a>UpdateFunctionCode</a> or <a>UpdateFunctionConfiguration</a> to update the function before publishing a version.</p> <p>Clients can invoke versions directly or with an alias. To create an alias, use <a>CreateAlias</a>.</p>
     #[allow(unused_mut)]
     async fn publish_version(
         &self,
@@ -8076,7 +8178,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Removes a statement from the permissions policy for a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">AWS Lambda layer</a>. For more information, see <a>AddLayerVersionPermission</a>.</p>
+    /// <p>Removes a statement from the permissions policy for a version of an <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html">Lambda layer</a>. For more information, see <a>AddLayerVersionPermission</a>.</p>
     #[allow(unused_mut)]
     async fn remove_layer_version_permission(
         &self,
@@ -8114,7 +8216,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Revokes function-use permission from an AWS service or another account. You can get the ID of the statement from the output of <a>GetPolicy</a>.</p>
+    /// <p>Revokes function-use permission from an Amazon Web Services service or another account. You can get the ID of the statement from the output of <a>GetPolicy</a>.</p>
     #[allow(unused_mut)]
     async fn remove_permission(
         &self,
@@ -8286,7 +8388,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p><p>Updates an event source mapping. You can change the function that AWS Lambda invokes, or pause invocation and resume later from the same location.</p> <p>The following error handling options are only available for stream sources (DynamoDB and Kinesis):</p> <ul> <li> <p> <code>BisectBatchOnFunctionError</code> - If the function returns an error, split the batch in two and retry.</p> </li> <li> <p> <code>DestinationConfig</code> - Send discarded records to an Amazon SQS queue or Amazon SNS topic.</p> </li> <li> <p> <code>MaximumRecordAgeInSeconds</code> - Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires</p> </li> <li> <p> <code>MaximumRetryAttempts</code> - Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p> </li> <li> <p> <code>ParallelizationFactor</code> - Process multiple batches from each shard concurrently.</p> </li> </ul></p>
+    /// <p><p>Updates an event source mapping. You can change the function that Lambda invokes, or pause invocation and resume later from the same location.</p> <p>For details about how to configure different event sources, see the following topics. </p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html#services-dynamodb-eventsourcemapping"> Amazon DynamoDB Streams</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#services-kinesis-eventsourcemapping"> Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-eventsource"> Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html#services-mq-eventsourcemapping"> Amazon MQ and RabbitMQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html"> Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/kafka-smaa.html"> Apache Kafka</a> </p> </li> </ul> <p>The following error handling options are only available for stream sources (DynamoDB and Kinesis):</p> <ul> <li> <p> <code>BisectBatchOnFunctionError</code> - If the function returns an error, split the batch in two and retry.</p> </li> <li> <p> <code>DestinationConfig</code> - Send discarded records to an Amazon SQS queue or Amazon SNS topic.</p> </li> <li> <p> <code>MaximumRecordAgeInSeconds</code> - Discard records older than the specified age. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires</p> </li> <li> <p> <code>MaximumRetryAttempts</code> - Discard records after the specified number of retries. The default value is infinite (-1). When set to infinite (-1), failed records are retried until the record expires.</p> </li> <li> <p> <code>ParallelizationFactor</code> - Process multiple batches from each shard concurrently.</p> </li> </ul> <p>For information about which configuration parameters apply to each event source, see the following topics.</p> <ul> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html#services-ddb-params"> Amazon DynamoDB Streams</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#services-kinesis-params"> Amazon Kinesis</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-params"> Amazon SQS</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-mq.html#services-mq-params"> Amazon MQ and RabbitMQ</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html#services-msk-parms"> Amazon MSK</a> </p> </li> <li> <p> <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kafka.html#services-kafka-parms"> Apache Kafka</a> </p> </li> </ul></p>
     #[allow(unused_mut)]
     async fn update_event_source_mapping(
         &self,
@@ -8354,7 +8456,7 @@ impl Lambda for LambdaClient {
         }
     }
 
-    /// <p>Modify the version-specific settings of a Lambda function.</p> <p>When you update a function, Lambda provisions an instance of the function and its supporting resources. If your function connects to a VPC, this process can take a minute. During this time, you can't modify the function, but you can still invoke it. The <code>LastUpdateStatus</code>, <code>LastUpdateStatusReason</code>, and <code>LastUpdateStatusReasonCode</code> fields in the response from <a>GetFunctionConfiguration</a> indicate when the update is complete and the function is processing events with the new configuration. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html">Function States</a>.</p> <p>These settings can vary between versions of a function and are locked when you publish a version. You can't modify the configuration of a published version, only the unpublished version.</p> <p>To configure function concurrency, use <a>PutFunctionConcurrency</a>. To grant invoke permissions to an account or AWS service, use <a>AddPermission</a>.</p>
+    /// <p>Modify the version-specific settings of a Lambda function.</p> <p>When you update a function, Lambda provisions an instance of the function and its supporting resources. If your function connects to a VPC, this process can take a minute. During this time, you can't modify the function, but you can still invoke it. The <code>LastUpdateStatus</code>, <code>LastUpdateStatusReason</code>, and <code>LastUpdateStatusReasonCode</code> fields in the response from <a>GetFunctionConfiguration</a> indicate when the update is complete and the function is processing events with the new configuration. For more information, see <a href="https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html">Function States</a>.</p> <p>These settings can vary between versions of a function and are locked when you publish a version. You can't modify the configuration of a published version, only the unpublished version.</p> <p>To configure function concurrency, use <a>PutFunctionConcurrency</a>. To grant invoke permissions to an account or Amazon Web Services service, use <a>AddPermission</a>.</p>
     #[allow(unused_mut)]
     async fn update_function_configuration(
         &self,
